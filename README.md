@@ -3,7 +3,7 @@
 A local services platform connecting professionals in Brazil.
 Built with a modern **Kotlin Multiplatform** stack focusing on SEO and high performance.
 
-## 🚀 Tech Stack
+## Tech Stack
 - **Language:** Kotlin (100%)
 - **Architecture:** Monorepo (Server + Web)
 - **Backend:** Ktor + Exposed (SQL DSL)
@@ -13,7 +13,7 @@ Built with a modern **Kotlin Multiplatform** stack focusing on SEO and high perf
 
 ---
 
-This is a Kotlin Multiplatform project targeting Web, Server.
+This is a Kotlin Multiplatform project targeting Web and Server.
 
 * [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
@@ -74,9 +74,3 @@ Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-mu
 
 We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
 If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
-
----
-
-### Disclaimer
-
-This project is the source code for the live platform Trabalho Arretado. While the code is open for educational purposes, the brand and database are proprietary.
