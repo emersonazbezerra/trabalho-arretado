@@ -1,76 +1,52 @@
-# Trabalho Arretado 🔨
+# Trabalho Arretado
 
-A local services platform connecting professionals in Brazil.
-Built with a modern **Kotlin Multiplatform** stack focusing on SEO and high performance.
-
-## Tech Stack
-- **Language:** Kotlin (100%)
-- **Architecture:** Monorepo (Server + Web)
-- **Backend:** Ktor + Exposed (SQL DSL)
-- **Frontend:** Compose Multiplatform (Web/Wasm)
-- **Database:** PostgreSQL + PostGIS
-- **Focus:** Programmatic SEO & WhatsApp Integration
+> Plataforma de divulgação e conexão de profissionais autônomos no Nordeste brasileiro.
 
 ---
 
-This is a Kotlin Multiplatform project targeting Web and Server.
+## O que é
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+O Trabalho Arretado conecta quem precisa de um serviço — reforma, elétrica, hidráulica, marcenaria, pintura e mais — com profissionais autônomos verificados na Paraíba e no Nordeste. A plataforma digitaliza o boca-a-boca regional, oferecendo perfis com portfólio visual, avaliações e contato direto via WhatsApp.
 
-* [/server](./server/src/main/kotlin) is for the Ktor server application.
+## Estrutura do repositório
 
-* [/shared](./shared/src) is for the code that will be shared between all targets in the project.
-  The most important subfolder is [commonMain](./shared/src/commonMain/kotlin). If preferred, you
-  can add code to the platform-specific folders here too.
+```
+trabalho-arretado/
+├── api/          ← Backend: Kotlin + Ktor
+├── web/          ← Frontend: Next.js + Tailwind CSS + shadcn/ui
+└── docs/         ← Documentação de produto, domínio e decisões técnicas
+```
 
-### Build and Run Server
+## Requisitos
 
-To build and run the development version of the server, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :server:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :server:run
-  ```
+- **Backend:** JDK 17+, Gradle 8+
+- **Frontend:** Node.js 20+, npm 10+
 
-### Build and Run Web Application
+## Rodando localmente
 
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE's toolbar or run it directly from the terminal:
-- for the Wasm target (faster, modern browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-- for the JS target (slower, supports older browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
-    ```
+```bash
+# Clonar o repositório
+git clone <repo-url>
+cd trabalho-arretado
 
----
+# Backend
+cd api
+cp .env.example .env   # preencher variáveis
+./gradlew run
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+# Frontend (outro terminal)
+cd web
+cp .env.example .env.local   # preencher variáveis
+npm install
+npm run dev
+```
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+A API estará disponível em `http://localhost:8080` e o frontend em `http://localhost:3000`.
+
+## Documentação
+
+Consulte a pasta `docs/` para contexto de produto, modelagem de domínio, roadmap e decisões técnicas.
+
+## Licença
+
+Privado — todos os direitos reservados.
