@@ -1,0 +1,13 @@
+# Secrets — never commit
+.env
+
+# Gradle build output and cache
+build/
+.gradle/
+
+# Preserve Gradle wrapper binary.
+# Necessary: the root *.jar rule uses a path separator, so its negation
+# only un-ignores gradle/wrapper/gradle-wrapper.jar at the repo root,
+# not api/gradle/wrapper/gradle-wrapper.jar.
+*.jar
+!gradle/wrapper/gradle-wrapper.jar

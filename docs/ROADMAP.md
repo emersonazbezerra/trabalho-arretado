@@ -1,107 +1,151 @@
 # ROADMAP.md — Roadmap de Desenvolvimento
 
-O desenvolvimento segue uma abordagem **MVP-first**: entregar valor real o mais rápido possível,
-validar com usuários reais, e só então escalar features. Cada fase tem critérios claros de saída.
+Abordagem **MVP-first**: entregar valor real o mais rápido possível, validar com usuários reais,
+escalar depois. Cada fase tem critérios claros de saída e checklists técnicos separados por subprojeto.
 
 ---
 
-## Fase 0 — Fundação (semanas 1–2)
+## Fase 0 — Fundação
+
 **Objetivo:** infraestrutura mínima funcionando localmente e em produção.
 
-- [ ] Monorepo configurado (api/ + web/)
-- [ ] Backend: projeto Ktor inicializado, health check `/api/health`
-- [ ] Frontend: projeto Next.js inicializado, página em branco no ar
-- [ ] Banco de dados PostgreSQL provisionado (Railway ou Supabase)
-- [ ] Deploy automático: Vercel (web) + Railway (api) conectados ao repositório
-- [ ] Variáveis de ambiente documentadas em `.env.example`
-- [ ] Domínio `www.trabalhoarretado.com.br` apontando para Vercel
+### Backend
+- [ ] Inicializar projeto Ktor com Gradle (`build.gradle.kts`, `settings.gradle.kts`, `gradlew`)
+- [ ] Adicionar dependências: Ktor, Exposed, Flyway, Koin, kotlinx.serialization, HikariCP, BCrypt
+- [ ] Configurar plugins: `Serialization.kt`, `Database.kt`, `Authentication.kt`, `Routing.kt`
+- [ ] Endpoint de saúde: `GET /api/health`
+- [ ] Criar `api/.env.example` com todas as variáveis necessárias
+- [ ] Configurar ktlint
+- [ ] PostgreSQL provisionado no Supabase (free tier)
+- [ ] Backend Ktor com deploy automático no Railway conectado ao repositório
 
-**Critério de saída:** `https://www.trabalhoarretado.com.br` no ar com página inicial estática.
+### Android
+- [ ] Inicializar projeto Android no Android Studio (package `com.trabalhoarretado`)
+- [ ] Adicionar dependências: Compose, Navigation, ViewModel, Retrofit, OkHttp, Room, DataStore, Coil, Koin
+- [ ] Configurar `BuildConfig` com `API_BASE_URL` lido de `local.properties`
+- [ ] Configurar Koin (`AppModule.kt`), Retrofit com `AuthInterceptor`, Room e DataStore
+- [ ] Configurar `NavHost` em `MainActivity.kt` com grafo de navegação
+- [ ] Configurar `Theme.kt`, `Color.kt` e `Type.kt` com a paleta e tipografia do app
+
+**Critério de saída:** backend respondendo em produção, app rodando no emulador com tela inicial.
 
 ---
 
-## Fase 1 — MVP (semanas 3–10)
+## Fase 1 — MVP
+
 **Objetivo:** profissional se cadastra, cliente encontra e entra em contato.
 
 ### Backend
-- [ ] Migrations com Flyway/Exposed
-- [ ] CRUD de `Professional` (cadastro, edição, ativação)
-- [ ] CRUD de `ServiceOffer` e `ServiceCategory` (categorias seedadas)
-- [ ] Upload de imagens para portfólio (Cloudflare R2 ou Supabase Storage)
-- [ ] Endpoint de busca: `/api/professionals?category=&city=&page=`
-- [ ] Endpoint de perfil público: `/api/professionals/{slug}`
-- [ ] Registro de `Lead` ao clicar em contato WhatsApp
-- [ ] Autenticação básica para profissionais (magic link por e-mail ou SMS OTP)
+- [ ] Migration `V1__create_users.sql` (tabela `users` com role `CLIENT | PROFESSIONAL`)
+- [ ] `POST /auth/register` — cadastro com senha hasheada via BCrypt
+- [ ] `POST /auth/login` — retorna token JWT (validade 7 dias)
+- [ ] `GET /auth/me` — dados do usuário autenticado
+- [ ] Middleware JWT em todas as rotas exceto `/auth/register` e `/auth/login`
+- [ ] Migration `V2__create_services.sql` (tabela `services` com FK para `users`)
+- [ ] `GET /professionals` — listagem paginada com filtros `category`, `city`, `page`
+- [ ] `GET /professionals/{id}` — perfil completo com serviços e avaliações agregadas
+- [ ] `PUT /professionals/{id}` — edição do próprio perfil (apenas PROFESSIONAL autenticado)
+- [ ] `POST /services` — publicar serviço (apenas PROFESSIONAL)
+- [ ] `PUT /services/{id}` e `DELETE /services/{id}` — editar/remover serviço (apenas dono)
+- [ ] Integração Cloudinary — upload de avatar, armazenar URL em `users.avatar_url`
 
-### Frontend
-- [ ] Página inicial com barra de busca (categoria + cidade)
-- [ ] Listagem de profissionais com cards (foto, nome, categoria, cidade, nota média)
-- [ ] Página de perfil do profissional (`/profissional/[slug]`)
-  - Foto, bio, categorias, área de atendimento
-  - Galeria de portfólio
-  - Botão WhatsApp com rastreamento de lead
-  - Avaliações
-- [ ] Formulário de cadastro para profissionais (`/cadastrar`)
-- [ ] SEO: meta tags, Open Graph, sitemap dinâmico, structured data (JSON-LD)
+### Android
+- [ ] `SplashScreen` — verificar token no DataStore, redirecionar para Login ou Home
+- [ ] `LoginScreen` + `RegisterScreen` com seleção de perfil (CLIENT | PROFESSIONAL)
+- [ ] `AuthViewModel` com `StateFlow`, persistir token no DataStore após login
+- [ ] Limpar token e redirecionar para Login ao receber 401
+- [ ] `HomeScreen` — feed com profissionais em destaque e grid de categorias
+- [ ] `SearchScreen` — barra de busca + chips de filtro (categoria, cidade) com paginação
+- [ ] `ProfessionalCard` — componente reutilizável (foto, nome, categoria, cidade, nota)
+- [ ] `ProfessionalProfileScreen` — foto, bio, lista de serviços, botão WhatsApp
+- [ ] Botão favoritar (ícone de coração) — chama `POST/DELETE /favorites/{profId}`
+- [ ] `PublishServiceScreen` — formulário para cadastrar/editar serviço (apenas PROFESSIONAL)
+- [ ] `FavoritesScreen` — lista de profissionais favoritados
+- [ ] `MyProfileScreen` — exibir e editar dados pessoais, upload de avatar via Cloudinary
 
-**Critério de saída:** 10 profissionais reais cadastrados em João Pessoa, primeiros leads registrados.
+**Critério de saída:** 10 profissionais reais cadastrados em João Pessoa, primeiros contatos registrados.
 
 ---
 
-## Fase 2 — Avaliações e Confiança (semanas 11–16)
+## Fase 2 — Avaliações e Confiança
+
 **Objetivo:** construir o sistema de reputação que diferencia a plataforma.
 
-- [ ] CRUD de `Review` — cliente deixa avaliação após contato
-- [ ] Cálculo e exibição de nota média no perfil
-- [ ] Importação de avaliações do Google Business Profile (Google My Business API)
-- [ ] Sistema de `Verification`: fluxo de solicitação + checagem manual pelo admin
-- [ ] Badge "Verificado" no perfil
-- [ ] Painel administrativo mínimo (aprovar verificações, moderar avaliações)
-- [ ] Notificação WhatsApp ao profissional quando recebe nova avaliação
+### Backend
+- [ ] Migration `V3__create_favorites.sql` (unique constraint `client_id` + `professional_id`)
+- [ ] `GET /favorites`, `POST /favorites/{profId}`, `DELETE /favorites/{profId}`
+- [ ] Migration `V4__create_reviews.sql` (unique constraint `client_id` + `professional_id`)
+- [ ] `GET /professionals/{id}/reviews`
+- [ ] `POST /professionals/{id}/reviews` — rating 1–5 + comentário
+- [ ] Retornar `averageRating` e `reviewCount` no endpoint de perfil
+
+### Android
+- [ ] `ReviewList` — componente com estrelas e comentário em `ProfessionalProfileScreen`
+- [ ] Formulário para submeter avaliação
+- [ ] Notificação push ao profissional ao receber nova avaliação
+- [ ] Estados de loading (shimmer), erro (retry) e vazio (empty state) em todas as telas
+- [ ] Cache local com Room para listagens (funcionar offline após primeiro acesso)
 
 **Critério de saída:** profissionais com 3+ avaliações reais, pelo menos 5 verificados.
 
 ---
 
-## Fase 3 — Monetização (semanas 17–24)
+## Fase 3 — Monetização
+
 **Objetivo:** primeira receita recorrente.
 
-- [ ] Modelo freemium: limite de 3 fotos no plano FREE
-- [ ] Plano Premium (R$ 29,90/mês): portfólio ilimitado, destaque na busca, estatísticas
-- [ ] Integração de pagamento: Stripe ou Pagar.me (cartão + PIX recorrente)
-- [ ] Dashboard do profissional: visualizações de perfil, leads recebidos, posição na busca
-- [ ] Destaque pago (`boost`) por período: profissional aparece no topo por 7/30 dias
-- [ ] E-mail de onboarding automatizado para novos cadastros
+- [ ] Modelo freemium: limite de funcionalidades no plano gratuito
+- [ ] Plano Premium: destaque na busca, fotos ilimitadas, estatísticas de visualização
+- [ ] Integração de pagamento (cartão + PIX recorrente)
+- [ ] Dashboard do profissional: visualizações de perfil e leads recebidos
+- [ ] Destaque pago (`boost`) por 7 ou 30 dias
 
 **Critério de saída:** primeiros R$ 500/mês de receita recorrente.
 
 ---
 
-## Fase 4 — Escala Regional (semanas 25–40)
+## Fase 4 — Escala Regional
+
 **Objetivo:** expansão para outras cidades paraibanas e nordestinas.
 
 - [ ] Suporte a múltiplos estados (PE, RN, CE, MA)
-- [ ] Geolocalização por raio: `/api/professionals?lat=&lng=&radius=`
-- [ ] App mobile via PWA com instalação no Android
-- [ ] Busca por voz (integração com input de pesquisa)
+- [ ] Busca por geolocalização (profissionais próximos ao usuário)
 - [ ] Parcerias com SENAI/SEBRAE para cadastro em massa
-- [ ] Blog/conteúdo SEO: "Como contratar um eletricista em João Pessoa"
-- [ ] Programa de indicação: profissional indica colega e ganha desconto no Premium
+- [ ] Programa de indicação: profissional indica colega e ganha benefício no Premium
+- [ ] Publicação na Google Play Store (produção)
+
+---
+
+## Qualidade (contínuo)
+
+Itens a cumprir antes de considerar cada fase encerrada:
+
+### Backend
+- [ ] Testes unitários dos services com `kotlin.test` + `mockk`
+- [ ] Testes de integração com Testcontainers (PostgreSQL real)
+- [ ] Relatório de cobertura com Kover (`./gradlew koverReport`)
+- [ ] Validar todos os endpoints via Postman/Insomnia antes de liberar para o app
+
+### Android
+- [ ] Testes unitários dos ViewModels com `kotlin.test` + `mockk`
+- [ ] Testes de UI com Compose Testing (`createComposeRule`)
+- [ ] Lint sem erros (`./gradlew lint`)
+- [ ] ProGuard/R8 configurado para build de release
 
 ---
 
 ## Backlog (sem prazo definido)
 
-- Integração com WhatsApp Business API para notificações em-app
 - Agendamento integrado (calendário no perfil do profissional)
+- Chat in-app entre cliente e profissional
 - Matching por IA (ranking preditivo por histórico + avaliações)
-- App nativo Android/iOS (Kotlin Multiplatform — apenas após validação do modelo)
-- API pública para integrações (construtoras, imobiliárias)
+- Versão iOS (Kotlin Multiplatform ou Flutter — apenas após validação do modelo)
+- API pública para integrações com construtoras e imobiliárias
 
 ---
 
 ## Notas
 
-- Itens podem ser reordenados conforme feedback dos primeiros usuários
-- Cada fase deve ser revisada antes de iniciar a próxima
-- Funcionalidades não planejadas que surgirem devem ser registradas no backlog antes de implementadas
+- Cada fase do backend deve estar concluída antes de implementar a fase correspondente no Android
+- Testar no emulador com `API_BASE_URL=http://10.0.2.2:8080` (localhost da máquina host)
+- Itens não planejados que surgirem devem ir para o backlog antes de serem implementados

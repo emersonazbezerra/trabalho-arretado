@@ -7,8 +7,8 @@ uma plataforma de divulgação e conexão de profissionais autônomos no Nordest
 
 ```
 trabalho-arretado/
-├── api/          ← Backend Kotlin/Ktor  →  leia api/CLAUDE.md
-├── web/          ← Frontend Next.js     →  leia web/CLAUDE.md
+├── api/          ← Backend Kotlin/Ktor       →  leia api/CLAUDE.md
+├── android/      ← App Android (Kotlin/Compose) →  leia android/CLAUDE.md
 └── docs/         ← Documentação viva do projeto
 ```
 
@@ -39,6 +39,7 @@ trabalho-arretado/
 # Backend (porta 8080)
 cd api && ./gradlew run
 
-# Frontend (porta 3000)
-cd web && npm run dev
+# App Android — abrir a pasta android/ no Android Studio e executar via IDE
+# ou via linha de comando (emulador já iniciado):
+cd android && ./gradlew installDebug
 ```

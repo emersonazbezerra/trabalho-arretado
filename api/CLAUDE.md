@@ -9,14 +9,14 @@ Este é o backend do **Trabalho Arretado**. Leia também `../docs/DOMAIN.md` e
 
 | Tecnologia | Versão | Papel |
 |---|---|---|
-| Kotlin | 2.x | Linguagem principal |
-| Ktor | 3.x | Framework web |
-| Exposed | 0.5x | ORM / DSL de banco |
+| Kotlin | 2.3.x | Linguagem principal |
+| Ktor | 3.4.x | Framework web |
+| Exposed | 1.x | ORM / DSL de banco (`org.jetbrains.exposed.v1.*`) |
 | PostgreSQL | 16 | Banco de dados principal |
 | Flyway | 10.x | Migrations de banco |
 | Koin | 4.x | Injeção de dependência |
 | kotlinx.serialization | — | Serialização JSON |
-| HikariCP | — | Connection pool |
+| HikariCP | 7.x | Connection pool |
 
 ---
 
@@ -42,7 +42,7 @@ api/src/main/kotlin/
 │   ├── db/
 │   │   ├── tables/             ← definições de tabelas Exposed
 │   │   └── migrations/        ← arquivos SQL do Flyway (V1__, V2__...)
-│   └── storage/                ← integração com Cloudflare R2
+│   └── storage/                ← integração com Cloudinary (upload de imagens)
 ├── routes/
 │   ├── ProfessionalRoutes.kt
 │   ├── ReviewRoutes.kt
@@ -138,8 +138,14 @@ V3__create_portfolio_items.sql
 
 ## Tabelas Exposed — exemplo de referência
 
+> **Importante:** Exposed 1.x mudou o namespace para `org.jetbrains.exposed.v1.*`.
+> Imports antigos `org.jetbrains.exposed.sql.*` não existem mais.
+
 ```kotlin
 // infra/db/tables/Professionals.kt
+import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.core.dao.id.UUIDTable
+
 object Professionals : UUIDTable("professionals") {
     val name = varchar("name", 255)
     val phone = varchar("phone", 20)
@@ -152,6 +158,69 @@ object Professionals : UUIDTable("professionals") {
     val createdAt = timestamp("created_at")
 }
 ```
+
+---
+
+## Modelo de dados
+
+| Tabela | Principais colunas |
+|--------|-------------------|
+| `users` | id, name, email, password_hash, role (`CLIENT` \| `PROFESSIONAL`), city, phone, avatar_url, created_at |
+| `services` | id, professional_id (FK → users), title, description, estimated_price, category, created_at |
+| `favorites` | id, client_id (FK → users), professional_id (FK → users), created_at |
+| `reviews` | id, client_id (FK → users), professional_id (FK → users), rating (1–5), comment, created_at |
+
+---
+
+## Endpoints da API
+
+### Autenticação
+
+| Endpoint | Método | Auth | Descrição |
+|----------|--------|------|-----------|
+| `/auth/register` | POST | — | Cadastro de novo usuário (cliente ou profissional) |
+| `/auth/login` | POST | — | Autenticação; retorna token JWT |
+| `/auth/me` | GET | JWT | Dados do usuário autenticado |
+
+### Profissionais e Serviços
+
+| Endpoint | Método | Auth | Descrição |
+|----------|--------|------|-----------|
+| `/professionals` | GET | JWT | Listagem com filtros por nome, categoria e cidade |
+| `/professionals/{id}` | GET | JWT | Perfil completo com serviços e avaliações |
+| `/professionals/{id}` | PUT | JWT | Edição do próprio perfil profissional |
+| `/services` | POST | JWT | Publicação de novo serviço pelo profissional |
+| `/services/{id}` | PUT | JWT | Edição de serviço existente |
+| `/services/{id}` | DELETE | JWT | Remoção de serviço |
+
+### Favoritos
+
+| Endpoint | Método | Auth | Descrição |
+|----------|--------|------|-----------|
+| `/favorites` | GET | JWT | Lista de profissionais favoritados pelo cliente |
+| `/favorites/{profId}` | POST | JWT | Adiciona profissional aos favoritos |
+| `/favorites/{profId}` | DELETE | JWT | Remove profissional dos favoritos |
+
+### Avaliações
+
+| Endpoint | Método | Auth | Descrição |
+|----------|--------|------|-----------|
+| `/professionals/{id}/reviews` | GET | JWT | Lista avaliações de um profissional |
+| `/professionals/{id}/reviews` | POST | JWT | Cliente registra avaliação |
+
+---
+
+## Fluxo de autenticação
+
+Todas as rotas exceto `/auth/register` e `/auth/login` exigem token JWT válido:
+
+```
+Authorization: Bearer {token}
+```
+
+- Token gerado no login, validade de **7 dias**
+- Senhas armazenadas com **BCrypt** (nunca em texto puro)
+- No app Android, o token é persistido via **DataStore** e injetado automaticamente pelo Retrofit
 
 ---
 

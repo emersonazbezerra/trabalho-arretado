@@ -15,11 +15,10 @@ Seguir este guia garante consistência entre backend, frontend e banco de dados.
 | Campos Kotlin | `camelCase` | `avatarUrl`, `createdAt` |
 | Rotas da API | `kebab-case`, plural | `/api/service-categories` |
 | Slugs de URL | `kebab-case` | `/profissional/joao-silva-eletricista-jp` |
-| Variáveis de ambiente | `SCREAMING_SNAKE_CASE` | `DATABASE_URL`, `R2_BUCKET_NAME` |
-| Componentes React | `PascalCase` | `ProfessionalCard`, `SearchBar` |
-| Hooks React | `camelCase` com prefixo `use` | `useProfessionals`, `useSearch` |
-| Arquivos de componente | `PascalCase.tsx` | `ProfessionalCard.tsx` |
-| Arquivos de rota Next.js | `kebab-case` ou `[param]` | `page.tsx`, `[slug]/page.tsx` |
+| Variáveis de ambiente | `SCREAMING_SNAKE_CASE` | `DATABASE_URL`, `CLOUDINARY_API_KEY` |
+| Classes Android (Compose) | `PascalCase` | `ProfessionalCard`, `HomeScreen` |
+| ViewModels Android | `PascalCase` + sufixo `ViewModel` | `HomeViewModel`, `SearchViewModel` |
+| Arquivos Kotlin (Android) | `PascalCase.kt` | `ProfessionalCard.kt`, `HomeScreen.kt` |
 
 ---
 
@@ -115,14 +114,14 @@ Valores padrão: `page=1`, `size=20`. Máximo: `size=50`.
 
 ---
 
-## Tipos compartilhados entre API e frontend
+## Tipos compartilhados entre API e app Android
 
-Como o backend é Kotlin e o frontend é TypeScript, os tipos precisam ser mantidos
-em sincronia manualmente. Convenção adotada:
+Backend (Kotlin/Ktor) e app Android (Kotlin/Compose) compartilham a mesma linguagem.
+Os DTOs do backend são espelhados como `data class` no módulo Android. Convenção adotada:
 
-- Os tipos TypeScript do frontend ficam em `web/src/types/api.ts`
-- Sempre que um DTO Kotlin for alterado, atualizar o tipo correspondente em `api.ts`
-- Nomenclatura idêntica entre DTOs Kotlin e interfaces TypeScript (ambos em `PascalCase`)
+- DTOs do backend ficam em `api/src/main/kotlin/dto/`
+- Data classes do Android ficam em `android/app/src/main/java/.../data/remote/dto/`
+- Nomenclatura idêntica entre os dois lados (ambos `PascalCase` em Kotlin)
 
 Exemplo:
 
@@ -135,23 +134,22 @@ data class ProfessionalSummaryDto(
     val avatarUrl: String?,
     val city: String,
     val averageRating: Double?,
-    val reviewCount: Int,
-    val verified: Boolean
+    val reviewCount: Int
 )
 ```
 
-```typescript
-// web/src/types/api.ts
-export interface ProfessionalSummary {
-  id: string
-  name: string
-  slug: string
-  avatarUrl: string | null
-  city: string
-  averageRating: number | null
-  reviewCount: number
-  verified: boolean
-}
+```kotlin
+// android/.../data/remote/dto/ProfessionalSummaryDto.kt
+@Serializable
+data class ProfessionalSummaryDto(
+    val id: String,
+    val name: String,
+    val slug: String,
+    val avatarUrl: String? = null,
+    val city: String,
+    val averageRating: Double? = null,
+    val reviewCount: Int
+)
 ```
 
 ---
@@ -162,19 +160,14 @@ export interface ProfessionalSummary {
 ```
 DATABASE_URL=postgresql://user:password@host:5432/trabalho_arretado
 JWT_SECRET=seu-secret-aqui
-R2_ACCOUNT_ID=
-R2_ACCESS_KEY_ID=
-R2_SECRET_ACCESS_KEY=
-R2_BUCKET_NAME=trabalho-arretado-media
-R2_PUBLIC_URL=https://media.trabalhoarretado.com.br
-SMTP_HOST=
-SMTP_PORT=587
-SMTP_USER=
-SMTP_PASS=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
 ```
 
-### web/.env.example
+### android/local.properties
 ```
-NEXT_PUBLIC_API_URL=http://localhost:8080
-NEXT_PUBLIC_SITE_URL=https://www.trabalhoarretado.com.br
+# Não commitar — adicionar ao .gitignore
+API_BASE_URL=http://10.0.2.2:8080
+# Em produção: API_BASE_URL=https://api.trabalhoarretado.com.br
 ```
