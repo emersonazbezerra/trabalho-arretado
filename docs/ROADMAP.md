@@ -10,17 +10,17 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 **Objetivo:** infraestrutura mínima funcionando localmente e em produção.
 
 ### Backend
-- [ ] Inicializar projeto Ktor com Gradle (`build.gradle.kts`, `settings.gradle.kts`, `gradlew`)
-- [ ] Adicionar dependências: Ktor, Exposed, Flyway, Koin, kotlinx.serialization, HikariCP, BCrypt
-- [ ] Configurar plugins: `Serialization.kt`, `Database.kt`, `Authentication.kt`, `Routing.kt`
-- [ ] Endpoint de saúde: `GET /api/health`
-- [ ] Criar `api/.env.example` com todas as variáveis necessárias
-- [ ] Configurar ktlint
-- [ ] PostgreSQL provisionado no Supabase (free tier)
+- [x] Inicializar projeto Ktor com Gradle (`build.gradle.kts`, `settings.gradle.kts`, `gradlew`)
+- [x] Adicionar dependências: Ktor, Exposed, Flyway, Koin, kotlinx.serialization, HikariCP, BCrypt
+- [x] Configurar plugins: `Serialization.kt`, `Database.kt`, `Authentication.kt`, `Routing.kt`
+- [x] Endpoint de saúde: `GET /api/health`
+- [x] Criar `api/.env.example` com todas as variáveis necessárias
+- [x] Configurar ktlint
+- [x] PostgreSQL provisionado no Supabase (free tier)
 - [ ] Backend Ktor com deploy automático no Railway conectado ao repositório
 
 ### Android
-- [ ] Inicializar projeto Android no Android Studio (package `com.trabalhoarretado`)
+- [ ] Inicializar projeto Android no Android Studio (package `br.com.trabalhoarretado`)
 - [ ] Adicionar dependências: Compose, Navigation, ViewModel, Retrofit, OkHttp, Room, DataStore, Coil, Koin
 - [ ] Configurar `BuildConfig` com `API_BASE_URL` lido de `local.properties`
 - [ ] Configurar Koin (`AppModule.kt`), Retrofit com `AuthInterceptor`, Room e DataStore
