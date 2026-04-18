@@ -41,7 +41,7 @@ api/src/main/kotlin/
 ├── infra/
 │   ├── db/
 │   │   ├── tables/             ← definições de tabelas Exposed
-│   │   └── migrations/        ← arquivos SQL do Flyway (V1__, V2__...)
+│   │   └── migrations/        ← arquivos SQL do Flyway (V001__, V002__...)
 │   └── storage/                ← integração com Cloudinary (upload de imagens)
 ├── routes/
 │   ├── ProfessionalRoutes.kt
@@ -125,9 +125,9 @@ fun Route.professionalRoutes(service: ProfessionalService) {
 Arquivos em `src/main/resources/db/migration/`, nomenclatura obrigatória:
 
 ```
-V1__create_professionals.sql
-V2__create_service_categories.sql
-V3__create_portfolio_items.sql
+V001__create_professionals.sql
+V002__create_service_categories.sql
+V003__create_portfolio_items.sql
 ```
 
 - Nunca editar uma migration já aplicada — criar uma nova `V{n}__alter_...`

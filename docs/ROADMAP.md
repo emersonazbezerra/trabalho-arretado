@@ -10,6 +10,7 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 **Objetivo:** infraestrutura mínima funcionando localmente e em produção.
 
 ### Backend
+
 - [x] Inicializar projeto Ktor com Gradle (`build.gradle.kts`, `settings.gradle.kts`, `gradlew`)
 - [x] Adicionar dependências: Ktor, Exposed, Flyway, Koin, kotlinx.serialization, HikariCP, BCrypt
 - [x] Configurar plugins: `Serialization.kt`, `Database.kt`, `Authentication.kt`, `Routing.kt`
@@ -20,12 +21,13 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 - [ ] Backend Ktor com deploy automático no Railway conectado ao repositório
 
 ### Android
-- [ ] Inicializar projeto Android no Android Studio (package `br.com.trabalhoarretado`)
-- [ ] Adicionar dependências: Compose, Navigation, ViewModel, Retrofit, OkHttp, Room, DataStore, Coil, Koin
-- [ ] Configurar `BuildConfig` com `API_BASE_URL` lido de `local.properties`
-- [ ] Configurar Koin (`AppModule.kt`), Retrofit com `AuthInterceptor`, Room e DataStore
-- [ ] Configurar `NavHost` em `MainActivity.kt` com grafo de navegação
-- [ ] Configurar `Theme.kt`, `Color.kt` e `Type.kt` com a paleta e tipografia do app
+
+- [x] Inicializar projeto Android no Android Studio (package `br.com.trabalhoarretado`)
+- [x] Adicionar dependências: Compose, Navigation, ViewModel, Retrofit, OkHttp, DataStore, Coil, Koin (Room defer para Fase 2 — aguardando KSP compatível com Kotlin 2.2.10)
+- [x] Configurar `BuildConfig` com `API_BASE_URL` lido de `local.properties`
+- [x] Configurar Koin (`AppModule.kt`) e DataStore
+- [x] Configurar `NavHost` em `MainActivity.kt` com grafo de navegação
+- [x] Configurar `Theme.kt`, `Color.kt` e `Type.kt` com a paleta e tipografia do app
 
 **Critério de saída:** backend respondendo em produção, app rodando no emulador com tela inicial.
 
@@ -36,12 +38,13 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 **Objetivo:** profissional se cadastra, cliente encontra e entra em contato.
 
 ### Backend
-- [ ] Migration `V1__create_users.sql` (tabela `users` com role `CLIENT | PROFESSIONAL`)
+
+- [ ] Migration `V001__create_users.sql` (tabela `users` com role `CLIENT | PROFESSIONAL`)
 - [ ] `POST /auth/register` — cadastro com senha hasheada via BCrypt
 - [ ] `POST /auth/login` — retorna token JWT (validade 7 dias)
 - [ ] `GET /auth/me` — dados do usuário autenticado
 - [ ] Middleware JWT em todas as rotas exceto `/auth/register` e `/auth/login`
-- [ ] Migration `V2__create_services.sql` (tabela `services` com FK para `users`)
+- [ ] Migration `V002__create_services.sql` (tabela `services` com FK para `users`)
 - [ ] `GET /professionals` — listagem paginada com filtros `category`, `city`, `page`
 - [ ] `GET /professionals/{id}` — perfil completo com serviços e avaliações agregadas
 - [ ] `PUT /professionals/{id}` — edição do próprio perfil (apenas PROFESSIONAL autenticado)
@@ -50,6 +53,7 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 - [ ] Integração Cloudinary — upload de avatar, armazenar URL em `users.avatar_url`
 
 ### Android
+
 - [ ] `SplashScreen` — verificar token no DataStore, redirecionar para Login ou Home
 - [ ] `LoginScreen` + `RegisterScreen` com seleção de perfil (CLIENT | PROFESSIONAL)
 - [ ] `AuthViewModel` com `StateFlow`, persistir token no DataStore após login
@@ -72,14 +76,16 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 **Objetivo:** construir o sistema de reputação que diferencia a plataforma.
 
 ### Backend
-- [ ] Migration `V3__create_favorites.sql` (unique constraint `client_id` + `professional_id`)
+
+- [ ] Migration `V003__create_favorites.sql` (unique constraint `client_id` + `professional_id`)
 - [ ] `GET /favorites`, `POST /favorites/{profId}`, `DELETE /favorites/{profId}`
-- [ ] Migration `V4__create_reviews.sql` (unique constraint `client_id` + `professional_id`)
+- [ ] Migration `V004__create_reviews.sql` (unique constraint `client_id` + `professional_id`)
 - [ ] `GET /professionals/{id}/reviews`
 - [ ] `POST /professionals/{id}/reviews` — rating 1–5 + comentário
 - [ ] Retornar `averageRating` e `reviewCount` no endpoint de perfil
 
 ### Android
+
 - [ ] `ReviewList` — componente com estrelas e comentário em `ProfessionalProfileScreen`
 - [ ] Formulário para submeter avaliação
 - [ ] Notificação push ao profissional ao receber nova avaliação
@@ -121,12 +127,14 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 Itens a cumprir antes de considerar cada fase encerrada:
 
 ### Backend
+
 - [ ] Testes unitários dos services com `kotlin.test` + `mockk`
 - [ ] Testes de integração com Testcontainers (PostgreSQL real)
 - [ ] Relatório de cobertura com Kover (`./gradlew koverReport`)
 - [ ] Validar todos os endpoints via Postman/Insomnia antes de liberar para o app
 
 ### Android
+
 - [ ] Testes unitários dos ViewModels com `kotlin.test` + `mockk`
 - [ ] Testes de UI com Compose Testing (`createComposeRule`)
 - [ ] Lint sem erros (`./gradlew lint`)
