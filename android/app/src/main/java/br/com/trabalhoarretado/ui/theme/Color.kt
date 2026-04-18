@@ -2,10 +2,12 @@ package br.com.trabalhoarretado.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val NavyDark = Color(0xFF1A1A2E)
+val NavyMedium = Color(0xFF16213E)
+val OrangeRed = Color(0xFFE94560)
+val OrangeRedDark = Color(0xFFC73652)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val NavyDarkVariant = Color(0xFF0F3460)
+val SurfaceLight = Color(0xFFF5F5F5)
+val OnNavy = Color(0xFFFFFFFF)
+val OnOrangeRed = Color(0xFFFFFFFF)
