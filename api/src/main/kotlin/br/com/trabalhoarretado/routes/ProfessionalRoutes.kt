@@ -16,7 +16,7 @@ import io.ktor.server.routing.route
 import java.util.UUID
 
 fun Route.professionalRoutes(professionalService: ProfessionalService) {
-    route("/professionals") {
+    route("/api/professionals") {
         get {
             val category = call.request.queryParameters["category"]
             val city = call.request.queryParameters["city"]

@@ -7,7 +7,7 @@ data class ProfessionalSummaryResponse(
     val id: String,
     val name: String,
     val city: String?,
-    val state: String,
+    val state: String?,
     val phone: String?,
     val avatarUrl: String?,
     val averageRating: Double,

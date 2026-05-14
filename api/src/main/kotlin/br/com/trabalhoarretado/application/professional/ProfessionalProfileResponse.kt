@@ -9,7 +9,7 @@ data class ProfessionalProfileResponse(
     val name: String,
     val email: String,
     val city: String?,
-    val state: String,
+    val state: String?,
     val phone: String?,
     val avatarUrl: String?,
     val services: List<ServiceOfferResponse>,
