@@ -19,7 +19,7 @@ import io.ktor.server.routing.route
 import java.util.UUID
 
 fun Route.serviceRoutes(serviceOfferService: ServiceOfferService) {
-    route("/services") {
+    route("/api/services") {
         post {
             val principal = call.principal<JWTPrincipal>()!!
             val callerId = principal.payload.getClaim("userId").asString()
