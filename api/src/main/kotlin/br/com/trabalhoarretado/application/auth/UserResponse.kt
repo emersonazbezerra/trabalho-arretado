@@ -9,7 +9,7 @@ data class UserResponse(
     val email: String,
     val role: String,
     val city: String?,
-    val state: String,
+    val state: String?,
     val phone: String?,
     val avatarUrl: String?,
     val createdAt: String,

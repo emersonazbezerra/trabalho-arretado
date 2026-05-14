@@ -16,7 +16,7 @@ import io.ktor.server.routing.route
 import java.util.UUID
 
 fun Route.authRoutes(authService: AuthService) {
-    route("/auth") {
+    route("/api/auth") {
         post("/register") {
             val req = call.receive<RegisterRequest>()
             val response = authService.register(req)

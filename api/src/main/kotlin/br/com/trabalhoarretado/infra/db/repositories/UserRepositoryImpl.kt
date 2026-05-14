@@ -37,6 +37,7 @@ class UserRepositoryImpl : UserRepository {
         passwordHash: String,
         role: UserRole,
         city: String?,
+        state: String?,
         phone: String?,
     ): User =
         transaction {
@@ -48,6 +49,7 @@ class UserRepositoryImpl : UserRepository {
                     it[Users.passwordHash] = passwordHash
                     it[Users.role] = role.name
                     it[Users.city] = city
+                    it[Users.state] = state
                     it[Users.phone] = phone
                     it[Users.createdAt] = now
                 }

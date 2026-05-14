@@ -13,6 +13,7 @@ interface UserRepository {
         passwordHash: String,
         role: UserRole,
         city: String?,
+        state: String?,
         phone: String?,
     ): User
 }

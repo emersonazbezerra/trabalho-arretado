@@ -9,8 +9,8 @@ object Users : UUIDTable("users") {
     val passwordHash = varchar("password_hash", 255)
     val role = varchar("role", 20)
     val city = varchar("city", 100).nullable()
-    val state = varchar("state", 2).default("PB")
-    val phone = varchar("phone", 20).nullable()
+    val state = varchar("state", 2).nullable()
+    val phone = varchar("phone", 23).nullable()
     val avatarUrl = varchar("avatar_url", 500).nullable()
     val createdAt = timestamp("created_at")
 }

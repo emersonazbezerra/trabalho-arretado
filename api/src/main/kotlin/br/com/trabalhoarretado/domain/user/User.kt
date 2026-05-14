@@ -12,7 +12,7 @@ data class User(
     val passwordHash: String,
     val role: UserRole,
     val city: String?,
-    val state: String,
+    val state: String?,
     val phone: String?,
     val avatarUrl: String?,
     val createdAt: Instant,

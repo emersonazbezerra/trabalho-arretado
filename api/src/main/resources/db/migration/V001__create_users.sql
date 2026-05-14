@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash VARCHAR(255) NOT NULL,
     role          VARCHAR(20)  NOT NULL,
     city          VARCHAR(100),
-    state         VARCHAR(2)   NOT NULL,
-    phone         VARCHAR(20),
+    state         VARCHAR(2),
+    phone         VARCHAR(23),
     avatar_url    VARCHAR(500),
     created_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );

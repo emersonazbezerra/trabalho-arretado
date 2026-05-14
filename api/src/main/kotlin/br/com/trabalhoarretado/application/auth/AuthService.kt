@@ -8,6 +8,7 @@ import br.com.trabalhoarretado.domain.ValidationException
 import br.com.trabalhoarretado.domain.user.User
 import br.com.trabalhoarretado.domain.user.UserRepository
 import br.com.trabalhoarretado.domain.user.UserRole
+import br.com.trabalhoarretado.infra.db.tables.Users.phone
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import org.mindrot.jbcrypt.BCrypt
@@ -35,6 +36,7 @@ class AuthService(
                 passwordHash = passwordHash,
                 role = role,
                 city = req.city,
+                state = req.state,
                 phone = req.phone,
             )
         return AuthResponse(token = generateToken(user.id, user.role), user = user.toResponse())
