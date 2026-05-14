@@ -1,6 +1,7 @@
 # Secrets — never commit
 .env*
 !.env.example
+http-client.private.env.json
 
 # Gradle build output and cache
 build/
