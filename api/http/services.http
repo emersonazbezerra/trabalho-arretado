@@ -1,0 +1,29 @@
+### Create service
+POST {{base_url}}/api/services
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Cleaning",
+  "description": "Top quality cleaning service for your home or office.",
+  "estimatedPrice": 80,
+  "category": "Housework"
+}
+
+### Update service
+PUT {{base_url}}/api/services/62034c5f-ff98-4668-a3d8-10950c59d422
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": null,
+  "description": null,
+  "estimatedPrice": 90,
+  "category": null
+}
+
+### Delete service
+DELETE {{base_url}}/api/services/62034c5f-ff98-4668-a3d8-10950c59d422
+Content-Type: application/json
+Authorization: Bearer {{token}}
+

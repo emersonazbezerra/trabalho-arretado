@@ -1,0 +1,16 @@
+### List Professionals
+GET {{base_url}}/api/professionals
+Authorization: Bearer {{token}}
+
+### Professional by ID
+GET {{base_url}}/api/professionals/35fddb33-0052-4391-b13a-44482c00123a
+Authorization: Bearer {{token}}
+
+### Update professional
+PUT {{base_url}}/api/professionals/35fddb33-0052-4391-b13a-44482c00123a
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "avatarUrl": "qffadsfa"
+}
