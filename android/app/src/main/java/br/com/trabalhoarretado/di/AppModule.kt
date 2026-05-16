@@ -6,7 +6,10 @@ import br.com.trabalhoarretado.data.remote.AuthAuthenticator
 import br.com.trabalhoarretado.data.remote.AuthInterceptor
 import br.com.trabalhoarretado.data.remote.NetworkModule
 import br.com.trabalhoarretado.data.repository.AuthRepository
+import br.com.trabalhoarretado.data.repository.ProfessionalRepository
 import br.com.trabalhoarretado.ui.auth.AuthViewModel
+import br.com.trabalhoarretado.ui.home.HomeViewModel
+import br.com.trabalhoarretado.ui.search.SearchViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -24,6 +27,9 @@ val appModule =
         single<ApiService> { NetworkModule.provideApiService(get()) }
 
         single { AuthRepository(get(), get()) }
+        single { ProfessionalRepository(get()) }
 
         viewModel { AuthViewModel(get()) }
+        viewModel { HomeViewModel(get()) }
+        viewModel { SearchViewModel(get()) }
     }

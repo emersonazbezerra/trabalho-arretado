@@ -10,4 +10,13 @@ sealed class Screen(
     data object Register : Screen("auth/register")
 
     data object Home : Screen("home")
+
+    data object Search : Screen("search?category={category}") {
+        fun build(category: String? = null): String =
+            "search?category=${category.orEmpty()}"
+    }
+
+    data object Professional : Screen("professional/{id}") {
+        fun build(id: String): String = "professional/$id"
+    }
 }

@@ -2,11 +2,15 @@ package br.com.trabalhoarretado.data.remote
 
 import br.com.trabalhoarretado.data.dto.AuthResponse
 import br.com.trabalhoarretado.data.dto.LoginRequest
+import br.com.trabalhoarretado.data.dto.PaginatedProfessionalsDto
+import br.com.trabalhoarretado.data.dto.ProfessionalProfileDto
 import br.com.trabalhoarretado.data.dto.RegisterRequest
 import br.com.trabalhoarretado.data.dto.UserDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
     @POST("/api/auth/register")
@@ -21,4 +25,16 @@ interface ApiService {
 
     @GET("/api/auth/me")
     suspend fun getMe(): UserDto
+
+    @GET("/api/professionals")
+    suspend fun listProfessionals(
+        @Query("category") category: String? = null,
+        @Query("city") city: String? = null,
+        @Query("page") page: Int = 1,
+    ): PaginatedProfessionalsDto
+
+    @GET("/api/professionals/{id}")
+    suspend fun getProfessional(
+        @Path("id") id: String,
+    ): ProfessionalProfileDto
 }

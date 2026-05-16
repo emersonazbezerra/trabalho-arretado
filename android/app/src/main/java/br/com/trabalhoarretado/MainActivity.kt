@@ -11,15 +11,19 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import br.com.trabalhoarretado.domain.AuthEvent
 import br.com.trabalhoarretado.domain.AuthEvents
 import br.com.trabalhoarretado.ui.auth.LoginScreen
 import br.com.trabalhoarretado.ui.auth.RegisterScreen
 import br.com.trabalhoarretado.ui.home.HomeScreen
 import br.com.trabalhoarretado.ui.navigation.Screen
+import br.com.trabalhoarretado.ui.professional.ProfessionalProfileScreen
+import br.com.trabalhoarretado.ui.search.SearchScreen
 import br.com.trabalhoarretado.ui.splash.SplashScreen
 import br.com.trabalhoarretado.ui.theme.TrabalhoArretadoTheme
 
@@ -87,11 +91,47 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Screen.Home.route) {
                             HomeScreen(
+                                onSearch = { category ->
+                                    navController.navigate(Screen.Search.build(category))
+                                },
+                                onProfessionalClick = { id ->
+                                    navController.navigate(Screen.Professional.build(id))
+                                },
                                 onLoggedOut = {
                                     navController.navigate(Screen.Login.route) {
                                         popUpTo(0) { inclusive = true }
                                     }
                                 },
+                            )
+                        }
+                        composable(
+                            route = Screen.Search.route,
+                            arguments =
+                                listOf(
+                                    navArgument("category") {
+                                        type = NavType.StringType
+                                        defaultValue = ""
+                                        nullable = false
+                                    },
+                                ),
+                        ) { backStackEntry ->
+                            val raw = backStackEntry.arguments?.getString("category").orEmpty()
+                            SearchScreen(
+                                initialCategory = raw.takeIf { it.isNotBlank() },
+                                onBack = { navController.popBackStack() },
+                                onProfessionalClick = { id ->
+                                    navController.navigate(Screen.Professional.build(id))
+                                },
+                            )
+                        }
+                        composable(
+                            route = Screen.Professional.route,
+                            arguments = listOf(navArgument("id") { type = NavType.StringType }),
+                        ) { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id").orEmpty()
+                            ProfessionalProfileScreen(
+                                professionalId = id,
+                                onBack = { navController.popBackStack() },
                             )
                         }
                     }
