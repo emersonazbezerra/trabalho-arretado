@@ -3,6 +3,7 @@ package br.com.trabalhoarretado.plugins
 import br.com.trabalhoarretado.application.auth.AuthService
 import br.com.trabalhoarretado.application.professional.ProfessionalService
 import br.com.trabalhoarretado.application.service.ServiceOfferService
+import br.com.trabalhoarretado.application.user.UserService
 import br.com.trabalhoarretado.domain.EmailAlreadyExistsException
 import br.com.trabalhoarretado.domain.ForbiddenException
 import br.com.trabalhoarretado.domain.InvalidCredentialsException
@@ -12,6 +13,7 @@ import br.com.trabalhoarretado.routes.authRoutes
 import br.com.trabalhoarretado.routes.healthRoutes
 import br.com.trabalhoarretado.routes.professionalRoutes
 import br.com.trabalhoarretado.routes.serviceRoutes
+import br.com.trabalhoarretado.routes.userRoutes
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -75,6 +77,7 @@ fun Application.configureRouting() {
     val authService: AuthService by inject()
     val professionalService: ProfessionalService by inject()
     val serviceOfferService: ServiceOfferService by inject()
+    val userService: UserService by inject()
 
     routing {
         healthRoutes()
@@ -82,6 +85,7 @@ fun Application.configureRouting() {
         authenticate("jwt-auth") {
             professionalRoutes(professionalService)
             serviceRoutes(serviceOfferService)
+            userRoutes(userService)
         }
     }
 }

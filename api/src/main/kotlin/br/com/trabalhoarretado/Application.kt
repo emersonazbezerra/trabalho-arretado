@@ -2,6 +2,7 @@ package br.com.trabalhoarretado
 
 import br.com.trabalhoarretado.di.JwtConfig
 import br.com.trabalhoarretado.di.appModule
+import br.com.trabalhoarretado.infra.storage.S3Config
 import br.com.trabalhoarretado.plugins.configureAuthentication
 import br.com.trabalhoarretado.plugins.configureDatabase
 import br.com.trabalhoarretado.plugins.configureRouting
@@ -27,9 +28,24 @@ fun Application.module() {
                     ?.toLong() ?: 7L,
         )
 
+    val s3Config =
+        S3Config(
+            endpoint = environment.config.property("s3.endpoint").getString(),
+            region = environment.config.property("s3.region").getString(),
+            accessKey = environment.config.property("s3.accessKey").getString(),
+            secretKey = environment.config.property("s3.secretKey").getString(),
+            bucket = environment.config.property("s3.bucket").getString(),
+            publicBaseUrl = environment.config.property("s3.publicBaseUrl").getString(),
+            pathStyle =
+                environment.config
+                    .propertyOrNull("s3.pathStyle")
+                    ?.getString()
+                    ?.toBoolean() ?: true,
+        )
+
     install(Koin) {
         slf4jLogger()
-        modules(appModule(jwtConfig))
+        modules(appModule(jwtConfig, s3Config))
     }
 
     configureSerialization()

@@ -12,5 +12,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  s3:
+    image: docker.io/scireum/s3-ninja:latest
+    container_name: trabalho-arretado-s3
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - s3_data:/home/sirius/data
+
 volumes:
   postgres_data:
+  s3_data:

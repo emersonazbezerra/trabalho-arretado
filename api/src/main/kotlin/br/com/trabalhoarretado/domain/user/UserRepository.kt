@@ -16,4 +16,9 @@ interface UserRepository {
         state: String?,
         phone: String?,
     ): User
+
+    fun updateAvatarUrl(
+        id: UUID,
+        avatarUrl: String,
+    ): User
 }

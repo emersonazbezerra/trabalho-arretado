@@ -1,5 +1,6 @@
 package br.com.trabalhoarretado.infra.db.repositories
 
+import br.com.trabalhoarretado.domain.NotFoundException
 import br.com.trabalhoarretado.domain.user.User
 import br.com.trabalhoarretado.domain.user.UserRepository
 import br.com.trabalhoarretado.domain.user.UserRole
@@ -9,6 +10,7 @@ import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.update
 import java.util.UUID
 import kotlin.time.Clock
 
@@ -66,6 +68,23 @@ class UserRepositoryImpl : UserRepository {
                 avatarUrl = null,
                 createdAt = now,
             )
+        }
+
+    override fun updateAvatarUrl(
+        id: UUID,
+        avatarUrl: String,
+    ): User =
+        transaction {
+            val rows =
+                Users.update({ Users.id eq id }) {
+                    it[Users.avatarUrl] = avatarUrl
+                }
+            if (rows == 0) throw NotFoundException("Usuário")
+            Users
+                .selectAll()
+                .where { Users.id eq id }
+                .map { it.toUser() }
+                .single()
         }
 
     private fun ResultRow.toUser() =

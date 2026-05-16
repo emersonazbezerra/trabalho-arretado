@@ -32,6 +32,7 @@ repositories {
 
 val exposedVersion = "1.2.0"
 val koinVersion = "4.2.1"
+val awsSdkVersion = "2.30.18"
 
 dependencies {
     // Ktor server — versions managed by io.ktor.plugin BOM
@@ -64,6 +65,11 @@ dependencies {
 
     // Security
     implementation("org.mindrot:jbcrypt:0.4")
+
+    // Object storage (S3-compatível)
+    implementation(platform("software.amazon.awssdk:bom:$awsSdkVersion"))
+    implementation("software.amazon.awssdk:s3")
+    implementation("software.amazon.awssdk:url-connection-client")
 
     // Logging
     implementation("ch.qos.logback:logback-classic:1.5.32")
