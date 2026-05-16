@@ -1,6 +1,7 @@
 package br.com.trabalhoarretado.plugins
 
 import br.com.trabalhoarretado.application.auth.AuthService
+import br.com.trabalhoarretado.application.favorite.FavoriteService
 import br.com.trabalhoarretado.application.professional.ProfessionalService
 import br.com.trabalhoarretado.application.service.ServiceOfferService
 import br.com.trabalhoarretado.application.user.UserService
@@ -10,6 +11,7 @@ import br.com.trabalhoarretado.domain.InvalidCredentialsException
 import br.com.trabalhoarretado.domain.NotFoundException
 import br.com.trabalhoarretado.domain.ValidationException
 import br.com.trabalhoarretado.routes.authRoutes
+import br.com.trabalhoarretado.routes.favoriteRoutes
 import br.com.trabalhoarretado.routes.healthRoutes
 import br.com.trabalhoarretado.routes.professionalRoutes
 import br.com.trabalhoarretado.routes.serviceRoutes
@@ -78,6 +80,7 @@ fun Application.configureRouting() {
     val professionalService: ProfessionalService by inject()
     val serviceOfferService: ServiceOfferService by inject()
     val userService: UserService by inject()
+    val favoriteService: FavoriteService by inject()
 
     routing {
         healthRoutes()
@@ -86,6 +89,7 @@ fun Application.configureRouting() {
             professionalRoutes(professionalService)
             serviceRoutes(serviceOfferService)
             userRoutes(userService)
+            favoriteRoutes(favoriteService)
         }
     }
 }

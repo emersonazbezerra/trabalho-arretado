@@ -1,0 +1,30 @@
+@clientEmail = client01@email.com
+@clientPassword = 12345678
+@profId = 00000000-0000-0000-0000-000000000000
+
+### Login do CLIENT (define {{token}})
+POST {{base_url}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{clientEmail}}",
+  "password": "{{clientPassword}}"
+}
+
+> {% client.global.set("token", response.body.token); %}
+
+### Lista favoritos do cliente autenticado
+GET {{base_url}}/api/favorites
+Authorization: Bearer {{token}}
+
+### Favoritar profissional — 201 na 1ª vez, 200 quando já existe
+POST {{base_url}}/api/favorites/{{profId}}
+Authorization: Bearer {{token}}
+
+### Lista de novo — deve incluir o profissional acima
+GET {{base_url}}/api/favorites
+Authorization: Bearer {{token}}
+
+### Desfavoritar — 204 (idempotente)
+DELETE {{base_url}}/api/favorites/{{profId}}
+Authorization: Bearer {{token}}
