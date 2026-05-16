@@ -18,7 +18,7 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 - [x] Criar `api/.env.example` com todas as variáveis necessárias
 - [x] Configurar ktlint
 - [x] PostgreSQL provisionado no Supabase (free tier)
-- [ ] Backend Ktor com deploy automático no Railway conectado ao repositório
+- [ ] Backend Ktor com deploy automático no Railway conectado ao repositório (Próximo passo)
 
 ### Android
 
@@ -39,22 +39,22 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 
 ### Backend
 
-- [ ] Migration `V001__create_users.sql` (tabela `users` com role `CLIENT | PROFESSIONAL`)
-- [ ] `POST /auth/register` — cadastro com senha hasheada via BCrypt
-- [ ] `POST /auth/login` — retorna token JWT (validade 7 dias)
-- [ ] `GET /auth/me` — dados do usuário autenticado
-- [ ] Middleware JWT em todas as rotas exceto `/auth/register` e `/auth/login`
-- [ ] Migration `V002__create_services.sql` (tabela `services` com FK para `users`)
-- [ ] `GET /professionals` — listagem paginada com filtros `category`, `city`, `page`
-- [ ] `GET /professionals/{id}` — perfil completo com serviços e avaliações agregadas
-- [ ] `PUT /professionals/{id}` — edição do próprio perfil (apenas PROFESSIONAL autenticado)
-- [ ] `POST /services` — publicar serviço (apenas PROFESSIONAL)
-- [ ] `PUT /services/{id}` e `DELETE /services/{id}` — editar/remover serviço (apenas dono)
-- [ ] Integração Cloudinary — upload de avatar, armazenar URL em `users.avatar_url`
+- [x] Migration `V001__create_users.sql` (tabela `users` com role `CLIENT | PROFESSIONAL`)
+- [x] `POST /auth/register` — cadastro com senha hasheada via BCrypt
+- [x] `POST /auth/login` — retorna token JWT (validade 7 dias)
+- [x] `GET /auth/me` — dados do usuário autenticado
+- [x] Middleware JWT em todas as rotas exceto `/auth/register` e `/auth/login`
+- [x] Migration `V002__create_services.sql` (tabela `services` com FK para `users`)
+- [x] `GET /professionals` — listagem paginada com filtros `category`, `city`, `page`
+- [x] `GET /professionals/{id}` — perfil completo com serviços e avaliações agregadas
+- [x] `PUT /professionals/{id}` — edição do próprio perfil (apenas PROFESSIONAL autenticado)
+- [x] `POST /services` — publicar serviço (apenas PROFESSIONAL)
+- [x] `PUT /services/{id}` e `DELETE /services/{id}` — editar/remover serviço (apenas dono)
+- [ ] Integração Cloudinary — upload de avatar, armazenar URL em `users.avatar_url` (Próximo passo)
 
 ### Android
 
-- [ ] `SplashScreen` — verificar token no DataStore, redirecionar para Login ou Home
+- [x] `SplashScreen` — verificar token no DataStore, redirecionar para Login ou Home (Basicamente pronto, falta integração com token)
 - [ ] `LoginScreen` + `RegisterScreen` com seleção de perfil (CLIENT | PROFESSIONAL)
 - [ ] `AuthViewModel` com `StateFlow`, persistir token no DataStore após login
 - [ ] Limpar token e redirecionar para Login ao receber 401
