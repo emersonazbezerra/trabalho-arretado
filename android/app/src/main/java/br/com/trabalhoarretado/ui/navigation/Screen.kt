@@ -19,4 +19,6 @@ sealed class Screen(
     data object Professional : Screen("professional/{id}") {
         fun build(id: String): String = "professional/$id"
     }
+
+    data object Favorites : Screen("favorites")
 }

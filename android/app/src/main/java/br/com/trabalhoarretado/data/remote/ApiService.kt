@@ -4,9 +4,12 @@ import br.com.trabalhoarretado.data.dto.AuthResponse
 import br.com.trabalhoarretado.data.dto.LoginRequest
 import br.com.trabalhoarretado.data.dto.PaginatedProfessionalsDto
 import br.com.trabalhoarretado.data.dto.ProfessionalProfileDto
+import br.com.trabalhoarretado.data.dto.ProfessionalSummaryDto
 import br.com.trabalhoarretado.data.dto.RegisterRequest
 import br.com.trabalhoarretado.data.dto.UserDto
+import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -37,4 +40,17 @@ interface ApiService {
     suspend fun getProfessional(
         @Path("id") id: String,
     ): ProfessionalProfileDto
+
+    @GET("/api/favorites")
+    suspend fun listFavorites(): List<ProfessionalSummaryDto>
+
+    @POST("/api/favorites/{profId}")
+    suspend fun addFavorite(
+        @Path("profId") profId: String,
+    ): Response<Unit>
+
+    @DELETE("/api/favorites/{profId}")
+    suspend fun removeFavorite(
+        @Path("profId") profId: String,
+    ): Response<Unit>
 }

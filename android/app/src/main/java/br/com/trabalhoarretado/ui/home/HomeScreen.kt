@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CircularProgressIndicator
@@ -46,6 +47,7 @@ import org.koin.compose.koinInject
 fun HomeScreen(
     onSearch: (category: String?) -> Unit,
     onProfessionalClick: (String) -> Unit,
+    onFavorites: () -> Unit,
     onLoggedOut: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
     authRepository: AuthRepository = koinInject(),
@@ -60,6 +62,9 @@ fun HomeScreen(
                 actions = {
                     IconButton(onClick = { onSearch(null) }) {
                         Icon(Icons.Filled.Search, contentDescription = "Buscar")
+                    }
+                    IconButton(onClick = onFavorites) {
+                        Icon(Icons.Filled.Favorite, contentDescription = "Favoritos")
                     }
                     IconButton(onClick = {
                         scope.launch {

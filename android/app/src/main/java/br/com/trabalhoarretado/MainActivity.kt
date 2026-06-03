@@ -20,6 +20,7 @@ import br.com.trabalhoarretado.domain.AuthEvent
 import br.com.trabalhoarretado.domain.AuthEvents
 import br.com.trabalhoarretado.ui.auth.LoginScreen
 import br.com.trabalhoarretado.ui.auth.RegisterScreen
+import br.com.trabalhoarretado.ui.favorites.FavoritesScreen
 import br.com.trabalhoarretado.ui.home.HomeScreen
 import br.com.trabalhoarretado.ui.navigation.Screen
 import br.com.trabalhoarretado.ui.professional.ProfessionalProfileScreen
@@ -97,6 +98,7 @@ class MainActivity : ComponentActivity() {
                                 onProfessionalClick = { id ->
                                     navController.navigate(Screen.Professional.build(id))
                                 },
+                                onFavorites = { navController.navigate(Screen.Favorites.route) },
                                 onLoggedOut = {
                                     navController.navigate(Screen.Login.route) {
                                         popUpTo(0) { inclusive = true }
@@ -132,6 +134,14 @@ class MainActivity : ComponentActivity() {
                             ProfessionalProfileScreen(
                                 professionalId = id,
                                 onBack = { navController.popBackStack() },
+                            )
+                        }
+                        composable(Screen.Favorites.route) {
+                            FavoritesScreen(
+                                onBack = { navController.popBackStack() },
+                                onProfessionalClick = { id ->
+                                    navController.navigate(Screen.Professional.build(id))
+                                },
                             )
                         }
                     }

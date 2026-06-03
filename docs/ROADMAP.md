@@ -50,22 +50,22 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 - [x] `PUT /professionals/{id}` — edição do próprio perfil (apenas PROFESSIONAL autenticado)
 - [x] `POST /services` — publicar serviço (apenas PROFESSIONAL)
 - [x] `PUT /services/{id}` e `DELETE /services/{id}` — editar/remover serviço (apenas dono)
-- [ ] Integração Cloudinary — upload de avatar, armazenar URL em `users.avatar_url` (Próximo passo)
+- [x] Upload de avatar via S3 Ninja (S3 local), abstraído por interface `ImageStorage`, armazena URL em `users.avatar_url` (Cloudinary substituído por endpoint S3-compatível — ver `PLAN.md`)
 
 ### Android
 
-- [x] `SplashScreen` — verificar token no DataStore, redirecionar para Login ou Home (Basicamente pronto, falta integração com token)
-- [ ] `LoginScreen` + `RegisterScreen` com seleção de perfil (CLIENT | PROFESSIONAL)
-- [ ] `AuthViewModel` com `StateFlow`, persistir token no DataStore após login
-- [ ] Limpar token e redirecionar para Login ao receber 401
-- [ ] `HomeScreen` — feed com profissionais em destaque e grid de categorias
-- [ ] `SearchScreen` — barra de busca + chips de filtro (categoria, cidade) com paginação
-- [ ] `ProfessionalCard` — componente reutilizável (foto, nome, categoria, cidade, nota)
-- [ ] `ProfessionalProfileScreen` — foto, bio, lista de serviços, botão WhatsApp
-- [ ] Botão favoritar (ícone de coração) — chama `POST/DELETE /favorites/{profId}`
-- [ ] `PublishServiceScreen` — formulário para cadastrar/editar serviço (apenas PROFESSIONAL)
-- [ ] `FavoritesScreen` — lista de profissionais favoritados
-- [ ] `MyProfileScreen` — exibir e editar dados pessoais, upload de avatar via Cloudinary
+- [x] `SplashScreen` — verificar token no DataStore, redirecionar para Login ou Home
+- [x] `LoginScreen` + `RegisterScreen` com seleção de perfil (CLIENT | PROFESSIONAL)
+- [x] `AuthViewModel` com `StateFlow`, persistir token no DataStore após login
+- [x] Limpar token e redirecionar para Login ao receber 401 (`AuthAuthenticator` + `AuthEvent`)
+- [x] `HomeScreen` — feed com profissionais em destaque e grid de categorias
+- [x] `SearchScreen` — barra de busca + chips de filtro (categoria, cidade) com paginação
+- [x] `ProfessionalCard` — componente reutilizável (foto, nome, categoria, cidade, nota)
+- [x] `ProfessionalProfileScreen` — foto, bio, lista de serviços, botão WhatsApp
+- [x] Botão favoritar (ícone de coração) — chama `POST/DELETE /favorites/{profId}`
+- [ ] `PublishServiceScreen` — formulário para cadastrar/editar serviço (apenas PROFESSIONAL) (Próximo passo — Fatia 4)
+- [x] `FavoritesScreen` — lista de profissionais favoritados
+- [ ] `MyProfileScreen` — exibir e editar dados pessoais, upload de avatar (Próximo passo — Fatia 4)
 
 **Critério de saída:** 10 profissionais reais cadastrados em João Pessoa, primeiros contatos registrados.
 
@@ -77,8 +77,8 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 
 ### Backend
 
-- [ ] Migration `V003__create_favorites.sql` (unique constraint `client_id` + `professional_id`)
-- [ ] `GET /favorites`, `POST /favorites/{profId}`, `DELETE /favorites/{profId}`
+- [x] Migration `V003__create_favorites.sql` (unique constraint `client_id` + `professional_id`) — antecipado para a Fase 1
+- [x] `GET /favorites`, `POST /favorites/{profId}`, `DELETE /favorites/{profId}` — antecipado para a Fase 1
 - [ ] Migration `V004__create_reviews.sql` (unique constraint `client_id` + `professional_id`)
 - [ ] `GET /professionals/{id}/reviews`
 - [ ] `POST /professionals/{id}/reviews` — rating 1–5 + comentário
