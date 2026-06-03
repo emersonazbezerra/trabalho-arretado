@@ -63,9 +63,9 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 - [x] `ProfessionalCard` — componente reutilizável (foto, nome, categoria, cidade, nota)
 - [x] `ProfessionalProfileScreen` — foto, bio, lista de serviços, botão WhatsApp
 - [x] Botão favoritar (ícone de coração) — chama `POST/DELETE /favorites/{profId}`
-- [ ] `PublishServiceScreen` — formulário para cadastrar/editar serviço (apenas PROFESSIONAL) (Próximo passo — Fatia 4)
+- [x] `PublishServiceScreen` — formulário para cadastrar/editar serviço (apenas PROFESSIONAL)
 - [x] `FavoritesScreen` — lista de profissionais favoritados
-- [ ] `MyProfileScreen` — exibir e editar dados pessoais, upload de avatar (Próximo passo — Fatia 4)
+- [x] `MyProfileScreen` — exibir e editar dados pessoais, upload de avatar (Photo Picker + S3)
 
 **Critério de saída:** 10 profissionais reais cadastrados em João Pessoa, primeiros contatos registrados.
 

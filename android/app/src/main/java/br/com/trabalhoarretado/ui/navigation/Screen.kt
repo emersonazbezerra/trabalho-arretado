@@ -21,4 +21,10 @@ sealed class Screen(
     }
 
     data object Favorites : Screen("favorites")
+
+    data object MyProfile : Screen("profile")
+
+    data object PublishService : Screen("service?serviceId={serviceId}") {
+        fun build(serviceId: String? = null): String = "service?serviceId=${serviceId.orEmpty()}"
+    }
 }

@@ -40,6 +40,31 @@ data class ServiceDto(
 )
 
 @Serializable
+data class CreateServiceRequest(
+    val title: String,
+    val description: String? = null,
+    val estimatedPrice: Double? = null,
+    val category: String,
+)
+
+@Serializable
+data class UpdateServiceRequest(
+    val title: String? = null,
+    val description: String? = null,
+    val estimatedPrice: Double? = null,
+    val category: String? = null,
+)
+
+@Serializable
+data class UpdateProfessionalRequest(
+    val name: String? = null,
+    val city: String? = null,
+    val state: String? = null,
+    val phone: String? = null,
+    val avatarUrl: String? = null,
+)
+
+@Serializable
 data class ProfessionalProfileDto(
     val id: String,
     val name: String,

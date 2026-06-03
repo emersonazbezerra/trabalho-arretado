@@ -24,6 +24,8 @@ import br.com.trabalhoarretado.ui.favorites.FavoritesScreen
 import br.com.trabalhoarretado.ui.home.HomeScreen
 import br.com.trabalhoarretado.ui.navigation.Screen
 import br.com.trabalhoarretado.ui.professional.ProfessionalProfileScreen
+import br.com.trabalhoarretado.ui.professional.PublishServiceScreen
+import br.com.trabalhoarretado.ui.profile.MyProfileScreen
 import br.com.trabalhoarretado.ui.search.SearchScreen
 import br.com.trabalhoarretado.ui.splash.SplashScreen
 import br.com.trabalhoarretado.ui.theme.TrabalhoArretadoTheme
@@ -99,6 +101,7 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate(Screen.Professional.build(id))
                                 },
                                 onFavorites = { navController.navigate(Screen.Favorites.route) },
+                                onMyProfile = { navController.navigate(Screen.MyProfile.route) },
                                 onLoggedOut = {
                                     navController.navigate(Screen.Login.route) {
                                         popUpTo(0) { inclusive = true }
@@ -142,6 +145,33 @@ class MainActivity : ComponentActivity() {
                                 onProfessionalClick = { id ->
                                     navController.navigate(Screen.Professional.build(id))
                                 },
+                            )
+                        }
+                        composable(Screen.MyProfile.route) {
+                            MyProfileScreen(
+                                onBack = { navController.popBackStack() },
+                                onPublishNew = { navController.navigate(Screen.PublishService.build(null)) },
+                                onEditService = { serviceId ->
+                                    navController.navigate(Screen.PublishService.build(serviceId))
+                                },
+                            )
+                        }
+                        composable(
+                            route = Screen.PublishService.route,
+                            arguments =
+                                listOf(
+                                    navArgument("serviceId") {
+                                        type = NavType.StringType
+                                        defaultValue = ""
+                                        nullable = false
+                                    },
+                                ),
+                        ) { backStackEntry ->
+                            val serviceId = backStackEntry.arguments?.getString("serviceId").orEmpty()
+                            PublishServiceScreen(
+                                serviceId = serviceId.takeIf { it.isNotBlank() },
+                                onBack = { navController.popBackStack() },
+                                onDone = { navController.popBackStack() },
                             )
                         }
                     }
