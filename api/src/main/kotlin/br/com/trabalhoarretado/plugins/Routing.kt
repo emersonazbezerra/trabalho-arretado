@@ -3,6 +3,7 @@ package br.com.trabalhoarretado.plugins
 import br.com.trabalhoarretado.application.auth.AuthService
 import br.com.trabalhoarretado.application.favorite.FavoriteService
 import br.com.trabalhoarretado.application.professional.ProfessionalService
+import br.com.trabalhoarretado.application.review.ReviewService
 import br.com.trabalhoarretado.application.service.ServiceOfferService
 import br.com.trabalhoarretado.application.user.UserService
 import br.com.trabalhoarretado.domain.EmailAlreadyExistsException
@@ -14,6 +15,7 @@ import br.com.trabalhoarretado.routes.authRoutes
 import br.com.trabalhoarretado.routes.favoriteRoutes
 import br.com.trabalhoarretado.routes.healthRoutes
 import br.com.trabalhoarretado.routes.professionalRoutes
+import br.com.trabalhoarretado.routes.reviewRoutes
 import br.com.trabalhoarretado.routes.serviceRoutes
 import br.com.trabalhoarretado.routes.userRoutes
 import io.ktor.http.HttpStatusCode
@@ -81,6 +83,7 @@ fun Application.configureRouting() {
     val serviceOfferService: ServiceOfferService by inject()
     val userService: UserService by inject()
     val favoriteService: FavoriteService by inject()
+    val reviewService: ReviewService by inject()
 
     routing {
         healthRoutes()
@@ -90,6 +93,7 @@ fun Application.configureRouting() {
             serviceRoutes(serviceOfferService)
             userRoutes(userService)
             favoriteRoutes(favoriteService)
+            reviewRoutes(reviewService)
         }
     }
 }

@@ -79,10 +79,10 @@ escalar depois. Cada fase tem critérios claros de saída e checklists técnicos
 
 - [x] Migration `V003__create_favorites.sql` (unique constraint `client_id` + `professional_id`) — antecipado para a Fase 1
 - [x] `GET /favorites`, `POST /favorites/{profId}`, `DELETE /favorites/{profId}` — antecipado para a Fase 1
-- [ ] Migration `V004__create_reviews.sql` (unique constraint `client_id` + `professional_id`)
-- [ ] `GET /professionals/{id}/reviews`
-- [ ] `POST /professionals/{id}/reviews` — rating 1–5 + comentário
-- [ ] Retornar `averageRating` e `reviewCount` no endpoint de perfil
+- [x] Migration `V004__create_reviews.sql` (unique constraint `client_id` + `professional_id`)
+- [x] `GET /professionals/{id}/reviews`
+- [x] `POST /professionals/{id}/reviews` — rating 1–5 + comentário (upsert: uma avaliação por par)
+- [x] Retornar `averageRating` e `reviewCount` no endpoint de perfil (agregação real; também aplicada em busca e favoritos)
 
 ### Android
 

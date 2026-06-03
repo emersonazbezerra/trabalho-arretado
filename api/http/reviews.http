@@ -1,0 +1,45 @@
+@clientEmail = client01@email.com
+@clientPassword = 12345678
+@profId = 00000000-0000-0000-0000-000000000000
+
+### Login do CLIENT (define {{token}})
+POST {{base_url}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{clientEmail}}",
+  "password": "{{clientPassword}}"
+}
+
+> {% client.global.set("token", response.body.token); %}
+
+### Lista avaliações do profissional (qualquer autenticado)
+GET {{base_url}}/api/professionals/{{profId}}/reviews
+Authorization: Bearer {{token}}
+
+### Avaliar profissional — 201 (CLIENT). Repetir atualiza a mesma avaliação.
+POST {{base_url}}/api/professionals/{{profId}}/reviews
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "comment": "Serviço excelente, recomendo!"
+}
+
+### Lista de novo — deve incluir a avaliação acima
+GET {{base_url}}/api/professionals/{{profId}}/reviews
+Authorization: Bearer {{token}}
+
+### Perfil do profissional — averageRating e reviewCount agora refletem as avaliações
+GET {{base_url}}/api/professionals/{{profId}}
+Authorization: Bearer {{token}}
+
+### Nota inválida — 422 VALIDATION_ERROR
+POST {{base_url}}/api/professionals/{{profId}}/reviews
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rating": 9
+}

@@ -7,6 +7,8 @@ import br.com.trabalhoarretado.domain.NotFoundException
 import br.com.trabalhoarretado.domain.professional.ProfessionalFilter
 import br.com.trabalhoarretado.domain.professional.ProfessionalRepository
 import br.com.trabalhoarretado.domain.professional.ProfessionalUpdate
+import br.com.trabalhoarretado.domain.review.RatingStats
+import br.com.trabalhoarretado.domain.review.ReviewRepository
 import br.com.trabalhoarretado.domain.service.ServiceOfferRepository
 import br.com.trabalhoarretado.domain.user.User
 import br.com.trabalhoarretado.domain.user.UserRole
@@ -15,6 +17,7 @@ import java.util.UUID
 class ProfessionalService(
     private val professionalRepository: ProfessionalRepository,
     private val serviceOfferRepository: ServiceOfferRepository,
+    private val reviewRepository: ReviewRepository,
 ) {
     fun search(
         category: String?,
@@ -23,8 +26,9 @@ class ProfessionalService(
     ): PaginatedProfessionalResponse {
         val size = 20
         val result = professionalRepository.search(ProfessionalFilter(category, city, page, size))
+        val stats = reviewRepository.statsFor(result.data.map { it.id })
         return PaginatedProfessionalResponse(
-            data = result.data.map { it.toSummary() },
+            data = result.data.map { it.toSummary(stats[it.id] ?: RatingStats.EMPTY) },
             pagination =
                 PaginationResponse(
                     page = result.pagination.page,
@@ -38,7 +42,7 @@ class ProfessionalService(
     fun findById(id: UUID): ProfessionalProfileResponse {
         val professional = professionalRepository.findById(id) ?: throw NotFoundException("Profissional")
         val services = serviceOfferRepository.findByProfessionalId(id).map { it.toResponse() }
-        return professional.toProfile(services)
+        return professional.toProfile(services, reviewRepository.stats(id))
     }
 
     fun update(
@@ -61,11 +65,11 @@ class ProfessionalService(
                     ),
             ) ?: throw NotFoundException("Profissional")
         val services = serviceOfferRepository.findByProfessionalId(id).map { it.toResponse() }
-        return updated.toProfile(services)
+        return updated.toProfile(services, reviewRepository.stats(id))
     }
 }
 
-private fun User.toSummary() =
+private fun User.toSummary(stats: RatingStats) =
     ProfessionalSummaryResponse(
         id = id.toString(),
         name = name,
@@ -73,21 +77,23 @@ private fun User.toSummary() =
         state = state,
         phone = phone,
         avatarUrl = avatarUrl,
-        averageRating = 0.0,
-        reviewCount = 0,
+        averageRating = stats.average,
+        reviewCount = stats.count,
     )
 
-private fun User.toProfile(services: List<ServiceOfferResponse>) =
-    ProfessionalProfileResponse(
-        id = id.toString(),
-        name = name,
-        email = email,
-        city = city,
-        state = state,
-        phone = phone,
-        avatarUrl = avatarUrl,
-        services = services,
-        averageRating = 0.0,
-        reviewCount = 0,
-        createdAt = createdAt.toString(),
-    )
+private fun User.toProfile(
+    services: List<ServiceOfferResponse>,
+    stats: RatingStats,
+) = ProfessionalProfileResponse(
+    id = id.toString(),
+    name = name,
+    email = email,
+    city = city,
+    state = state,
+    phone = phone,
+    avatarUrl = avatarUrl,
+    services = services,
+    averageRating = stats.average,
+    reviewCount = stats.count,
+    createdAt = createdAt.toString(),
+)

@@ -4,6 +4,8 @@ import br.com.trabalhoarretado.application.professional.ProfessionalSummaryRespo
 import br.com.trabalhoarretado.domain.ForbiddenException
 import br.com.trabalhoarretado.domain.NotFoundException
 import br.com.trabalhoarretado.domain.favorite.FavoriteRepository
+import br.com.trabalhoarretado.domain.review.RatingStats
+import br.com.trabalhoarretado.domain.review.ReviewRepository
 import br.com.trabalhoarretado.domain.user.User
 import br.com.trabalhoarretado.domain.user.UserRepository
 import br.com.trabalhoarretado.domain.user.UserRole
@@ -18,13 +20,16 @@ sealed class FavoriteAddResult {
 class FavoriteService(
     private val favoriteRepository: FavoriteRepository,
     private val userRepository: UserRepository,
+    private val reviewRepository: ReviewRepository,
 ) {
     fun list(
         clientId: UUID,
         callerRole: UserRole,
     ): List<ProfessionalSummaryResponse> {
         requireClient(callerRole)
-        return favoriteRepository.listProfessionalsByClient(clientId).map { it.toSummary() }
+        val professionals = favoriteRepository.listProfessionalsByClient(clientId)
+        val stats = reviewRepository.statsFor(professionals.map { it.id })
+        return professionals.map { it.toSummary(stats[it.id] ?: RatingStats.EMPTY) }
     }
 
     fun add(
@@ -54,7 +59,7 @@ class FavoriteService(
     }
 }
 
-private fun User.toSummary() =
+private fun User.toSummary(stats: RatingStats) =
     ProfessionalSummaryResponse(
         id = id.toString(),
         name = name,
@@ -62,6 +67,6 @@ private fun User.toSummary() =
         state = state,
         phone = phone,
         avatarUrl = avatarUrl,
-        averageRating = 0.0,
-        reviewCount = 0,
+        averageRating = stats.average,
+        reviewCount = stats.count,
     )
