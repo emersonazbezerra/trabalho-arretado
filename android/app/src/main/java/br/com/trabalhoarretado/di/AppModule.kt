@@ -8,6 +8,7 @@ import br.com.trabalhoarretado.data.remote.NetworkModule
 import br.com.trabalhoarretado.data.repository.AuthRepository
 import br.com.trabalhoarretado.data.repository.FavoriteRepository
 import br.com.trabalhoarretado.data.repository.ProfessionalRepository
+import br.com.trabalhoarretado.data.repository.ReviewRepository
 import br.com.trabalhoarretado.data.repository.ServiceRepository
 import br.com.trabalhoarretado.data.repository.UserRepository
 import br.com.trabalhoarretado.ui.auth.AuthViewModel
@@ -38,11 +39,12 @@ val appModule =
         single { FavoriteRepository(get()) }
         single { ServiceRepository(get()) }
         single { UserRepository(get()) }
+        single { ReviewRepository(get()) }
 
         viewModel { AuthViewModel(get()) }
         viewModel { HomeViewModel(get()) }
         viewModel { SearchViewModel(get()) }
-        viewModel { ProfessionalProfileViewModel(get(), get(), get()) }
+        viewModel { ProfessionalProfileViewModel(get(), get(), get(), get()) }
         viewModel { FavoritesViewModel(get()) }
         viewModel { PublishServiceViewModel(get(), get(), get()) }
         viewModel { MyProfileViewModel(get(), get(), get(), get()) }

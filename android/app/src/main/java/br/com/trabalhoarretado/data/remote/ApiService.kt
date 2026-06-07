@@ -1,12 +1,14 @@
 package br.com.trabalhoarretado.data.remote
 
 import br.com.trabalhoarretado.data.dto.AuthResponse
+import br.com.trabalhoarretado.data.dto.CreateReviewRequest
 import br.com.trabalhoarretado.data.dto.CreateServiceRequest
 import br.com.trabalhoarretado.data.dto.LoginRequest
 import br.com.trabalhoarretado.data.dto.PaginatedProfessionalsDto
 import br.com.trabalhoarretado.data.dto.ProfessionalProfileDto
 import br.com.trabalhoarretado.data.dto.ProfessionalSummaryDto
 import br.com.trabalhoarretado.data.dto.RegisterRequest
+import br.com.trabalhoarretado.data.dto.ReviewDto
 import br.com.trabalhoarretado.data.dto.ServiceDto
 import br.com.trabalhoarretado.data.dto.UpdateProfessionalRequest
 import br.com.trabalhoarretado.data.dto.UpdateServiceRequest
@@ -83,6 +85,17 @@ interface ApiService {
     suspend fun deleteService(
         @Path("id") id: String,
     ): Response<Unit>
+
+    @GET("/api/professionals/{id}/reviews")
+    suspend fun listReviews(
+        @Path("id") professionalId: String,
+    ): List<ReviewDto>
+
+    @POST("/api/professionals/{id}/reviews")
+    suspend fun createReview(
+        @Path("id") professionalId: String,
+        @Body request: CreateReviewRequest,
+    ): ReviewDto
 
     @Multipart
     @POST("/api/users/me/avatar")

@@ -56,6 +56,22 @@ data class UpdateServiceRequest(
 )
 
 @Serializable
+data class ReviewDto(
+    val id: String,
+    val clientId: String,
+    val clientName: String,
+    val rating: Int,
+    val comment: String? = null,
+    val createdAt: String,
+)
+
+@Serializable
+data class CreateReviewRequest(
+    val rating: Int,
+    val comment: String? = null,
+)
+
+@Serializable
 data class UpdateProfessionalRequest(
     val name: String? = null,
     val city: String? = null,
