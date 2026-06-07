@@ -18,6 +18,7 @@ class ProfessionalService(
     private val professionalRepository: ProfessionalRepository,
     private val serviceOfferRepository: ServiceOfferRepository,
     private val reviewRepository: ReviewRepository,
+    private val defaultAvatarUrl: String,
 ) {
     fun search(
         category: String?,
@@ -28,7 +29,7 @@ class ProfessionalService(
         val result = professionalRepository.search(ProfessionalFilter(category, city, page, size))
         val stats = reviewRepository.statsFor(result.data.map { it.id })
         return PaginatedProfessionalResponse(
-            data = result.data.map { it.toSummary(stats[it.id] ?: RatingStats.EMPTY) },
+            data = result.data.map { it.toSummary(stats[it.id] ?: RatingStats.EMPTY, defaultAvatarUrl) },
             pagination =
                 PaginationResponse(
                     page = result.pagination.page,
@@ -42,7 +43,7 @@ class ProfessionalService(
     fun findById(id: UUID): ProfessionalProfileResponse {
         val professional = professionalRepository.findById(id) ?: throw NotFoundException("Profissional")
         val services = serviceOfferRepository.findByProfessionalId(id).map { it.toResponse() }
-        return professional.toProfile(services, reviewRepository.stats(id))
+        return professional.toProfile(services, reviewRepository.stats(id), defaultAvatarUrl)
     }
 
     fun update(
@@ -65,18 +66,18 @@ class ProfessionalService(
                     ),
             ) ?: throw NotFoundException("Profissional")
         val services = serviceOfferRepository.findByProfessionalId(id).map { it.toResponse() }
-        return updated.toProfile(services, reviewRepository.stats(id))
+        return updated.toProfile(services, reviewRepository.stats(id), defaultAvatarUrl)
     }
 }
 
-private fun User.toSummary(stats: RatingStats) =
+private fun User.toSummary(stats: RatingStats, defaultAvatarUrl: String) =
     ProfessionalSummaryResponse(
         id = id.toString(),
         name = name,
         city = city,
         state = state,
         phone = phone,
-        avatarUrl = avatarUrl,
+        avatarUrl = avatarUrl ?: defaultAvatarUrl,
         averageRating = stats.average,
         reviewCount = stats.count,
     )
@@ -84,6 +85,7 @@ private fun User.toSummary(stats: RatingStats) =
 private fun User.toProfile(
     services: List<ServiceOfferResponse>,
     stats: RatingStats,
+    defaultAvatarUrl: String,
 ) = ProfessionalProfileResponse(
     id = id.toString(),
     name = name,
@@ -91,7 +93,7 @@ private fun User.toProfile(
     city = city,
     state = state,
     phone = phone,
-    avatarUrl = avatarUrl,
+    avatarUrl = avatarUrl ?: defaultAvatarUrl,
     services = services,
     averageRating = stats.average,
     reviewCount = stats.count,

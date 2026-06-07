@@ -11,6 +11,7 @@ import java.util.UUID
 class UserService(
     private val userRepository: UserRepository,
     private val imageStorage: ImageStorage,
+    private val defaultAvatarUrl: String,
 ) {
     suspend fun uploadAvatar(
         userId: UUID,
@@ -28,7 +29,7 @@ class UserService(
 
         val key = "users/$userId/${UUID.randomUUID()}.$extension"
         val url = imageStorage.upload(bytes, contentType, key)
-        return userRepository.updateAvatarUrl(userId, url).toResponse()
+        return userRepository.updateAvatarUrl(userId, url).toResponse(defaultAvatarUrl)
     }
 
     companion object {

@@ -21,6 +21,7 @@ class FavoriteService(
     private val favoriteRepository: FavoriteRepository,
     private val userRepository: UserRepository,
     private val reviewRepository: ReviewRepository,
+    private val defaultAvatarUrl: String,
 ) {
     fun list(
         clientId: UUID,
@@ -29,7 +30,7 @@ class FavoriteService(
         requireClient(callerRole)
         val professionals = favoriteRepository.listProfessionalsByClient(clientId)
         val stats = reviewRepository.statsFor(professionals.map { it.id })
-        return professionals.map { it.toSummary(stats[it.id] ?: RatingStats.EMPTY) }
+        return professionals.map { it.toSummary(stats[it.id] ?: RatingStats.EMPTY, defaultAvatarUrl) }
     }
 
     fun add(
@@ -59,14 +60,14 @@ class FavoriteService(
     }
 }
 
-private fun User.toSummary(stats: RatingStats) =
+private fun User.toSummary(stats: RatingStats, defaultAvatarUrl: String) =
     ProfessionalSummaryResponse(
         id = id.toString(),
         name = name,
         city = city,
         state = state,
         phone = phone,
-        avatarUrl = avatarUrl,
+        avatarUrl = avatarUrl ?: defaultAvatarUrl,
         averageRating = stats.average,
         reviewCount = stats.count,
     )

@@ -32,6 +32,8 @@ fun appModule(
     jwtConfig: JwtConfig,
     s3Config: S3Config,
 ) = module {
+    val defaultAvatarUrl = s3Config.defaultAvatarUrl
+
     single<UserRepository> { UserRepositoryImpl() }
     single<ProfessionalRepository> { ProfessionalRepositoryImpl() }
     single<ServiceOfferRepository> { ServiceOfferRepositoryImpl() }
@@ -40,10 +42,10 @@ fun appModule(
 
     single<ImageStorage> { S3ImageStorage(s3Config) }
 
-    single { AuthService(get(), jwtConfig) }
-    single { ProfessionalService(get(), get(), get()) }
+    single { AuthService(get(), jwtConfig, defaultAvatarUrl) }
+    single { ProfessionalService(get(), get(), get(), defaultAvatarUrl) }
     single { ServiceOfferService(get()) }
-    single { UserService(get(), get()) }
-    single { FavoriteService(get(), get(), get()) }
+    single { UserService(get(), get(), defaultAvatarUrl) }
+    single { FavoriteService(get(), get(), get(), defaultAvatarUrl) }
     single { ReviewService(get(), get()) }
 }

@@ -18,6 +18,7 @@ import java.util.UUID
 class AuthService(
     private val userRepository: UserRepository,
     private val jwtConfig: JwtConfig,
+    private val defaultAvatarUrl: String,
 ) {
     fun register(req: RegisterRequest): AuthResponse {
         val role =
@@ -39,18 +40,18 @@ class AuthService(
                 state = req.state,
                 phone = req.phone,
             )
-        return AuthResponse(token = generateToken(user.id, user.role), user = user.toResponse())
+        return AuthResponse(token = generateToken(user.id, user.role), user = user.toResponse(defaultAvatarUrl))
     }
 
     fun login(req: LoginRequest): AuthResponse {
         val user = userRepository.findByEmail(req.email) ?: throw InvalidCredentialsException()
         if (!BCrypt.checkpw(req.password, user.passwordHash)) throw InvalidCredentialsException()
-        return AuthResponse(token = generateToken(user.id, user.role), user = user.toResponse())
+        return AuthResponse(token = generateToken(user.id, user.role), user = user.toResponse(defaultAvatarUrl))
     }
 
     fun getMe(userId: UUID): UserResponse {
         val user = userRepository.findById(userId) ?: throw NotFoundException("Usuário")
-        return user.toResponse()
+        return user.toResponse(defaultAvatarUrl)
     }
 
     private fun generateToken(
@@ -67,7 +68,7 @@ class AuthService(
             .sign(Algorithm.HMAC256(jwtConfig.secret))
 }
 
-internal fun User.toResponse() =
+internal fun User.toResponse(defaultAvatarUrl: String) =
     UserResponse(
         id = id.toString(),
         name = name,
@@ -76,6 +77,6 @@ internal fun User.toResponse() =
         city = city,
         state = state,
         phone = phone,
-        avatarUrl = avatarUrl,
+        avatarUrl = avatarUrl ?: defaultAvatarUrl,
         createdAt = createdAt.toString(),
     )

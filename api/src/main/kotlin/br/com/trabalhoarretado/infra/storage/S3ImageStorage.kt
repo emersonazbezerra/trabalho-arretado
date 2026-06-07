@@ -23,7 +23,10 @@ data class S3Config(
     val bucket: String,
     val publicBaseUrl: String,
     val pathStyle: Boolean,
-)
+) {
+    val defaultAvatarUrl: String
+        get() = "${publicBaseUrl.trimEnd('/')}/default-avatar.jpg"
+}
 
 class S3ImageStorage(
     private val config: S3Config,
