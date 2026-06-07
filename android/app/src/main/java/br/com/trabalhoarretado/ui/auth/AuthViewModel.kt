@@ -44,7 +44,10 @@ class AuthViewModel(
             _uiState.value =
                 when (val result = authRepository.login(email.trim(), password)) {
                     is Result.Success -> AuthUiState.Success(result.data.user)
-                    is Result.Error -> AuthUiState.Error(result.message)
+                    is Result.Error ->
+                        AuthUiState.Error(
+                            if (result.httpStatus == 401) "Usuário e/ou senha inválidos" else result.message,
+                        )
                 }
         }
     }

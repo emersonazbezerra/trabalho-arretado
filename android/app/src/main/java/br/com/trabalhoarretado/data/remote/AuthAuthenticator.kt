@@ -16,6 +16,8 @@ class AuthAuthenticator(
         route: Route?,
         response: Response,
     ): Request? {
+        // 401 nos endpoints de auth são credenciais inválidas, não token expirado.
+        if (response.request.url.encodedPath.startsWith("/api/auth/")) return null
         runBlocking { tokenStore.clear() }
         AuthEvents.emit(AuthEvent.Unauthorized)
         return null
