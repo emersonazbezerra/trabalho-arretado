@@ -191,7 +191,11 @@ private fun ProfileContent(
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     Icon(Icons.Filled.Star, contentDescription = null, tint = Color(0xFFFFA000), modifier = Modifier.size(18.dp))
                     Text(
-                        "%.1f (%d avaliações)".format(profile.averageRating, profile.reviewCount),
+                        when (profile.reviewCount) {
+                            0 -> "Sem avaliações"
+                            1 -> "%.1f (1 avaliação)".format(profile.averageRating)
+                            else -> "%.1f (%d avaliações)".format(profile.averageRating, profile.reviewCount)
+                        },
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }

@@ -90,7 +90,11 @@ fun ProfessionalCard(
                         modifier = Modifier.size(16.dp),
                     )
                     Text(
-                        "%.1f (%d)".format(professional.averageRating, professional.reviewCount),
+                        when (professional.reviewCount) {
+                            0 -> "Sem avaliações"
+                            1 -> "%.1f (1 avaliação)".format(professional.averageRating)
+                            else -> "%.1f (%d avaliações)".format(professional.averageRating, professional.reviewCount)
+                        },
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
