@@ -4,22 +4,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.trabalhoarretado.data.dto.ProfessionalProfileDto
 import br.com.trabalhoarretado.data.dto.ReviewDto
-import br.com.trabalhoarretado.data.repository.AuthRepository
+import br.com.trabalhoarretado.data.local.TokenStore
 import br.com.trabalhoarretado.data.repository.FavoriteRepository
 import br.com.trabalhoarretado.data.repository.ProfessionalRepository
 import br.com.trabalhoarretado.data.repository.ReviewRepository
 import br.com.trabalhoarretado.domain.Result
 import br.com.trabalhoarretado.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ProfessionalProfileViewModel(
     private val professionalRepository: ProfessionalRepository,
     private val favoriteRepository: FavoriteRepository,
-    private val authRepository: AuthRepository,
     private val reviewRepository: ReviewRepository,
+    private val tokenStore: TokenStore,
 ) : ViewModel() {
     private val _state = MutableStateFlow<UiState<ProfessionalProfileDto>>(UiState.Loading)
     val state: StateFlow<UiState<ProfessionalProfileDto>> = _state.asStateFlow()
@@ -37,8 +40,14 @@ class ProfessionalProfileViewModel(
     private val _reviews = MutableStateFlow<UiState<List<ReviewDto>>>(UiState.Loading)
     val reviews: StateFlow<UiState<List<ReviewDto>>> = _reviews.asStateFlow()
 
-    // ID do usuário logado — usado para impedir que profissional avalie a si mesmo.
     private val _currentUserId = MutableStateFlow<String?>(null)
+
+    // Derivado reativo: atualiza automaticamente quando _state, _isClient ou _currentUserId mudam.
+    val canReview: StateFlow<Boolean> =
+        combine(_state, _isClient, _currentUserId) { state, isClient, userId ->
+            val profId = (state as? UiState.Success)?.data?.id ?: return@combine false
+            isClient && userId != profId
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val showReviewForm = MutableStateFlow(false)
 
@@ -58,6 +67,16 @@ class ProfessionalProfileViewModel(
     private var professionalId: String = ""
     private var loaded = false
 
+    init {
+        // Lê role e userId do cache imediatamente ao criar o ViewModel,
+        // antes mesmo de load() ser chamado pela tela.
+        viewModelScope.launch {
+            val role = tokenStore.getUserRole()
+            _currentUserId.value = tokenStore.getUserId()
+            if (role == "CLIENT") _isClient.value = true
+        }
+    }
+
     fun load(id: String) {
         if (loaded) return
         loaded = true
@@ -71,15 +90,10 @@ class ProfessionalProfileViewModel(
                     return@launch
                 }
             }
-            val me = authRepository.me()
-            if (me is Result.Success) {
-                _currentUserId.value = me.data.id
-                if (me.data.role == "CLIENT") {
-                    _isClient.value = true
-                    val favorites = favoriteRepository.list()
-                    if (favorites is Result.Success) {
-                        _isFavorite.value = favorites.data.any { it.id == id }
-                    }
+            if (_isClient.value) {
+                val favorites = favoriteRepository.list()
+                if (favorites is Result.Success) {
+                    _isFavorite.value = favorites.data.any { it.id == id }
                 }
             }
         }
@@ -139,12 +153,6 @@ class ProfessionalProfileViewModel(
             }
             _reviewSubmitting.value = false
         }
-    }
-
-    fun canReview(): Boolean {
-        // Apenas clientes podem avaliar; e o profissional não pode se auto-avaliar.
-        val profId = (_state.value as? UiState.Success)?.data?.id ?: return false
-        return _isClient.value && _currentUserId.value != profId
     }
 
     fun retry() {

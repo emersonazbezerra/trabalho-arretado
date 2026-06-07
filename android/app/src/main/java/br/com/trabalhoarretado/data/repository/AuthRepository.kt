@@ -18,13 +18,17 @@ class AuthRepository(
         password: String,
     ): Result<AuthResponse> {
         val result = apiCall { api.login(LoginRequest(email, password)) }
-        if (result is Result.Success) tokenStore.setToken(result.data.token)
+        if (result is Result.Success) {
+            tokenStore.setSession(result.data.token, result.data.user.id, result.data.user.role)
+        }
         return result
     }
 
     suspend fun register(request: RegisterRequest): Result<AuthResponse> {
         val result = apiCall { api.register(request) }
-        if (result is Result.Success) tokenStore.setToken(result.data.token)
+        if (result is Result.Success) {
+            tokenStore.setSession(result.data.token, result.data.user.id, result.data.user.role)
+        }
         return result
     }
 

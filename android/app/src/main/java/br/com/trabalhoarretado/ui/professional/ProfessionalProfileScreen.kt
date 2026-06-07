@@ -74,6 +74,7 @@ fun ProfessionalProfileScreen(
     val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
     val favoriteBusy by viewModel.favoriteBusy.collectAsStateWithLifecycle()
     val reviews by viewModel.reviews.collectAsStateWithLifecycle()
+    val canReview by viewModel.canReview.collectAsStateWithLifecycle()
     val showReviewForm by viewModel.showReviewForm.collectAsStateWithLifecycle()
     val reviewSubmitting by viewModel.reviewSubmitting.collectAsStateWithLifecycle()
     val reviewError by viewModel.reviewError.collectAsStateWithLifecycle()
@@ -135,7 +136,7 @@ fun ProfessionalProfileScreen(
                     ProfileContent(
                         profile = s.data,
                         reviews = reviews,
-                        canReview = viewModel.canReview(),
+                        canReview = canReview,
                         onReviewClick = viewModel::openReviewForm,
                         onRetryReviews = viewModel::loadReviews,
                     )
