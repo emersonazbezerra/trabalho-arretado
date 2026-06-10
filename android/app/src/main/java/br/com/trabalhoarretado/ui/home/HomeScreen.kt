@@ -36,7 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.trabalhoarretado.data.repository.AuthRepository
-import br.com.trabalhoarretado.ui.common.PROFESSIONAL_CATEGORIES
+import br.com.trabalhoarretado.ui.common.ServiceCategory
 import br.com.trabalhoarretado.ui.common.ProfessionalCard
 import br.com.trabalhoarretado.ui.common.UiState
 import kotlinx.coroutines.launch
@@ -94,10 +94,10 @@ fun HomeScreen(
                 Text("Categorias", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                 Spacer(Modifier.height(8.dp))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(PROFESSIONAL_CATEGORIES) { category ->
+                    items(ServiceCategory.entries) { category ->
                         AssistChip(
-                            onClick = { onSearch(category) },
-                            label = { Text(category) },
+                            onClick = { onSearch(category.name) },
+                            label = { Text(category.label) },
                         )
                     }
                 }

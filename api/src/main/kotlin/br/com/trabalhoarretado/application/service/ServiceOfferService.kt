@@ -2,7 +2,9 @@ package br.com.trabalhoarretado.application.service
 
 import br.com.trabalhoarretado.domain.ForbiddenException
 import br.com.trabalhoarretado.domain.NotFoundException
+import br.com.trabalhoarretado.domain.ValidationException
 import br.com.trabalhoarretado.domain.service.NewServiceOffer
+import br.com.trabalhoarretado.domain.service.ServiceCategory
 import br.com.trabalhoarretado.domain.service.ServiceOffer
 import br.com.trabalhoarretado.domain.service.ServiceOfferRepository
 import br.com.trabalhoarretado.domain.service.ServiceOfferUpdate
@@ -23,7 +25,7 @@ class ServiceOfferService(
                     title = req.title,
                     description = req.description,
                     estimatedPrice = req.estimatedPrice?.let { BigDecimal.valueOf(it) },
-                    category = req.category,
+                    category = parseCategory(req.category),
                 ),
             )
         return offer.toResponse()
@@ -44,7 +46,7 @@ class ServiceOfferService(
                         title = req.title,
                         description = req.description,
                         estimatedPrice = req.estimatedPrice?.let { BigDecimal.valueOf(it) },
-                        category = req.category,
+                        category = req.category?.let { parseCategory(it) },
                     ),
             ) ?: throw NotFoundException("Serviço")
         return updated.toResponse()
@@ -58,6 +60,14 @@ class ServiceOfferService(
         if (existing.professionalId != callerId) throw ForbiddenException()
         serviceOfferRepository.delete(id)
     }
+
+    private fun parseCategory(raw: String): ServiceCategory =
+        runCatching { ServiceCategory.valueOf(raw.uppercase()) }
+            .getOrElse {
+                throw ValidationException(
+                    "Categoria inválida. Use uma das: ${ServiceCategory.entries.joinToString { it.name }}",
+                )
+            }
 }
 
 internal fun ServiceOffer.toResponse() =
@@ -67,6 +77,6 @@ internal fun ServiceOffer.toResponse() =
         title = title,
         description = description,
         estimatedPrice = estimatedPrice?.toDouble(),
-        category = category,
+        category = category.name,
         createdAt = createdAt.toString(),
     )

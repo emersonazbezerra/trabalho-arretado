@@ -35,7 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import br.com.trabalhoarretado.ui.common.PROFESSIONAL_CATEGORIES
+import br.com.trabalhoarretado.ui.common.ServiceCategory
 import br.com.trabalhoarretado.ui.common.ProfessionalCard
 import org.koin.androidx.compose.koinViewModel
 
@@ -98,11 +98,11 @@ fun SearchScreen(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(PROFESSIONAL_CATEGORIES) { category ->
+                items(ServiceCategory.entries) { category ->
                     FilterChip(
-                        selected = filters.category == category,
-                        onClick = { viewModel.toggleCategory(category) },
-                        label = { Text(category) },
+                        selected = filters.category == category.name,
+                        onClick = { viewModel.toggleCategory(category.name) },
+                        label = { Text(category.label) },
                     )
                 }
             }

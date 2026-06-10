@@ -57,6 +57,7 @@ import br.com.trabalhoarretado.data.dto.ProfessionalProfileDto
 import br.com.trabalhoarretado.data.dto.ReviewDto
 import br.com.trabalhoarretado.data.dto.ServiceDto
 import br.com.trabalhoarretado.ui.common.UiState
+import br.com.trabalhoarretado.ui.common.categoryLabel
 import coil3.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 
@@ -386,7 +387,7 @@ private fun ServiceCard(service: ServiceDto) {
         Column(Modifier.padding(12.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Text(service.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
-                AssistChip(onClick = {}, label = { Text(service.category) })
+                AssistChip(onClick = {}, label = { Text(categoryLabel(service.category)) })
             }
             if (!service.description.isNullOrBlank()) {
                 Spacer(Modifier.height(4.dp))

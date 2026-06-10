@@ -1,6 +1,8 @@
-package br.com.trabalhoarretado.ui.common
+package br.com.trabalhoarretado.domain.service
 
-enum class ServiceCategory(val label: String) {
+enum class ServiceCategory(
+    val label: String,
+) {
     MASONRY("Alvenaria"),
     ELECTRICAL("Eletricidade"),
     PLUMBING("Hidráulica"),
@@ -10,5 +12,3 @@ enum class ServiceCategory(val label: String) {
     CARPENTRY("Marcenaria"),
     MECHANICS("Mecânica"),
 }
-
-fun categoryLabel(code: String): String = ServiceCategory.entries.find { it.name == code }?.label ?: code

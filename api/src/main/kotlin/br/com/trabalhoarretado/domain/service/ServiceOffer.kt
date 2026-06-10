@@ -10,7 +10,7 @@ data class ServiceOffer(
     val title: String,
     val description: String?,
     val estimatedPrice: BigDecimal?,
-    val category: String,
+    val category: ServiceCategory,
     val createdAt: Instant,
 )
 
@@ -19,12 +19,12 @@ data class NewServiceOffer(
     val title: String,
     val description: String?,
     val estimatedPrice: BigDecimal?,
-    val category: String,
+    val category: ServiceCategory,
 )
 
 data class ServiceOfferUpdate(
     val title: String?,
     val description: String?,
     val estimatedPrice: BigDecimal?,
-    val category: String?,
+    val category: ServiceCategory?,
 )

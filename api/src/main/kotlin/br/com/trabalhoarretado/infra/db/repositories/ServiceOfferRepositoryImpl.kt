@@ -1,6 +1,7 @@
 package br.com.trabalhoarretado.infra.db.repositories
 
 import br.com.trabalhoarretado.domain.service.NewServiceOffer
+import br.com.trabalhoarretado.domain.service.ServiceCategory
 import br.com.trabalhoarretado.domain.service.ServiceOffer
 import br.com.trabalhoarretado.domain.service.ServiceOfferRepository
 import br.com.trabalhoarretado.domain.service.ServiceOfferUpdate
@@ -27,7 +28,7 @@ class ServiceOfferRepositoryImpl : ServiceOfferRepository {
                     it[title] = offer.title
                     it[description] = offer.description
                     it[estimatedPrice] = offer.estimatedPrice
-                    it[category] = offer.category
+                    it[category] = offer.category.name
                     it[createdAt] = now
                 }
             ServiceOffer(
@@ -67,7 +68,7 @@ class ServiceOfferRepositoryImpl : ServiceOfferRepository {
                 update.title?.let { title -> it[Services.title] = title }
                 update.description?.let { desc -> it[Services.description] = desc }
                 update.estimatedPrice?.let { price -> it[Services.estimatedPrice] = price }
-                update.category?.let { cat -> it[Services.category] = cat }
+                update.category?.let { cat -> it[Services.category] = cat.name }
             }
             Services
                 .selectAll()
@@ -89,7 +90,7 @@ class ServiceOfferRepositoryImpl : ServiceOfferRepository {
             title = this[Services.title],
             description = this[Services.description],
             estimatedPrice = this[Services.estimatedPrice],
-            category = this[Services.category],
+            category = ServiceCategory.valueOf(this[Services.category]),
             createdAt = this[Services.createdAt],
         )
 }

@@ -59,6 +59,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.trabalhoarretado.data.dto.ServiceDto
 import br.com.trabalhoarretado.data.dto.UserDto
 import br.com.trabalhoarretado.ui.common.UiState
+import br.com.trabalhoarretado.ui.common.categoryLabel
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -312,7 +313,7 @@ private fun ServiceRow(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(service.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
-                Text(service.category, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(categoryLabel(service.category), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             IconButton(onClick = onDelete) {
                 Icon(Icons.Filled.Delete, contentDescription = "Remover serviço", tint = MaterialTheme.colorScheme.error)

@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import br.com.trabalhoarretado.ui.common.PROFESSIONAL_CATEGORIES
+import br.com.trabalhoarretado.ui.common.ServiceCategory
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,11 +111,11 @@ fun PublishServiceScreen(
                     Text("Categoria", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
                     Spacer(Modifier.height(12.dp))
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(PROFESSIONAL_CATEGORIES) { category ->
+                        items(ServiceCategory.entries) { category ->
                             FilterChip(
-                                selected = form.category == category,
-                                onClick = { viewModel.setCategory(category) },
-                                label = { Text(category) },
+                                selected = form.category == category.name,
+                                onClick = { viewModel.setCategory(category.name) },
+                                label = { Text(category.label) },
                             )
                         }
                     }
