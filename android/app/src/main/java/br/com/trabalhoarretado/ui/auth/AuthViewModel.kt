@@ -61,8 +61,16 @@ class AuthViewModel(
         state: String?,
         phone: String?,
     ) {
-        if (name.isBlank() || email.isBlank() || password.length < 6) {
-            _uiState.value = AuthUiState.Error("Nome, email e senha (≥6 caracteres) são obrigatórios")
+        if (name.isBlank() || email.isBlank()) {
+            _uiState.value = AuthUiState.Error("Nome e e-mail são obrigatórios")
+            return
+        }
+        if (!EMAIL_REGEX.matches(email.trim())) {
+            _uiState.value = AuthUiState.Error("Informe um e-mail válido")
+            return
+        }
+        if (password.length < 6) {
+            _uiState.value = AuthUiState.Error("A senha precisa ter pelo menos 6 caracteres")
             return
         }
         _uiState.value = AuthUiState.Loading
@@ -87,5 +95,9 @@ class AuthViewModel(
 
     fun reset() {
         _uiState.value = AuthUiState.Idle
+    }
+
+    companion object {
+        private val EMAIL_REGEX = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
     }
 }
