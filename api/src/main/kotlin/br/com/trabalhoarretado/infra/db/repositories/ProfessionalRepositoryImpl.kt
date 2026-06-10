@@ -84,6 +84,14 @@ class ProfessionalRepositoryImpl : ProfessionalRepository {
             condition = condition and (Users.city like "%$city%")
         }
 
+        condition =
+            condition and
+            exists(
+                Services
+                    .selectAll()
+                    .where { Services.professionalId eq Users.id },
+            )
+
         filter.category?.let { category ->
             condition =
                 condition and
