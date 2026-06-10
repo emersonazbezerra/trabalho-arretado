@@ -27,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -55,6 +56,7 @@ fun HomeScreen(
     authRepository: AuthRepository = koinInject(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -83,49 +85,55 @@ fun HomeScreen(
             )
         },
     ) { padding ->
-        LazyColumn(
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = viewModel::refresh,
             modifier =
                 Modifier
                     .fillMaxSize()
                     .padding(padding),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         ) {
-            item {
-                Text("Categorias", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                Spacer(Modifier.height(8.dp))
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(ServiceCategory.entries) { category ->
-                        AssistChip(
-                            onClick = { onSearch(category.name) },
-                            label = { Text(category.label) },
-                        )
-                    }
-                }
-                Spacer(Modifier.height(16.dp))
-                Text("Destaques", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                Spacer(Modifier.height(8.dp))
-            }
-
-            when (val s = state) {
-                is UiState.Loading -> item { CenteredBox { CircularProgressIndicator() } }
-                is UiState.Error -> item {
-                    CenteredBox {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(s.message, color = MaterialTheme.colorScheme.error)
-                            TextButton(onClick = viewModel::load) { Text("Tentar novamente") }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            ) {
+                item {
+                    Text("Categorias", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Spacer(Modifier.height(8.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        items(ServiceCategory.entries) { category ->
+                            AssistChip(
+                                onClick = { onSearch(category.name) },
+                                label = { Text(category.label) },
+                            )
                         }
                     }
+                    Spacer(Modifier.height(16.dp))
+                    Text("Destaques", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Spacer(Modifier.height(8.dp))
                 }
-                is UiState.Empty -> item {
-                    CenteredBox { Text("Nenhum profissional cadastrado ainda.") }
-                }
-                is UiState.Success ->
-                    items(s.data) { professional ->
-                        ProfessionalCard(
-                            professional = professional,
-                            onClick = { onProfessionalClick(professional.id) },
-                        )
+
+                when (val s = state) {
+                    is UiState.Loading -> item { CenteredBox { CircularProgressIndicator() } }
+                    is UiState.Error -> item {
+                        CenteredBox {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(s.message, color = MaterialTheme.colorScheme.error)
+                                TextButton(onClick = viewModel::load) { Text("Tentar novamente") }
+                            }
+                        }
                     }
+                    is UiState.Empty -> item {
+                        CenteredBox { Text("Nenhum profissional cadastrado ainda.") }
+                    }
+                    is UiState.Success ->
+                        items(s.data) { professional ->
+                            ProfessionalCard(
+                                professional = professional,
+                                onClick = { onProfessionalClick(professional.id) },
+                            )
+                        }
+                }
             }
         }
     }

@@ -17,6 +17,9 @@ class HomeViewModel(
     private val _state = MutableStateFlow<UiState<List<ProfessionalSummaryDto>>>(UiState.Loading)
     val state: StateFlow<UiState<List<ProfessionalSummaryDto>>> = _state.asStateFlow()
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     init {
         load()
     }
@@ -24,12 +27,22 @@ class HomeViewModel(
     fun load() {
         viewModelScope.launch {
             _state.value = UiState.Loading
-            _state.value =
-                when (val result = professionalRepository.list(category = null, city = null, page = 1)) {
-                    is Result.Success ->
-                        if (result.data.data.isEmpty()) UiState.Empty else UiState.Success(result.data.data)
-                    is Result.Error -> UiState.Error(result.message)
-                }
+            _state.value = fetch()
         }
     }
+
+    fun refresh() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            _state.value = fetch()
+            _isRefreshing.value = false
+        }
+    }
+
+    private suspend fun fetch(): UiState<List<ProfessionalSummaryDto>> =
+        when (val result = professionalRepository.list(category = null, city = null, page = 1)) {
+            is Result.Success ->
+                if (result.data.data.isEmpty()) UiState.Empty else UiState.Success(result.data.data)
+            is Result.Error -> UiState.Error(result.message)
+        }
 }

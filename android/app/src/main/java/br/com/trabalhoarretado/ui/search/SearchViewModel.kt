@@ -45,6 +45,9 @@ class SearchViewModel(
     private val _state = MutableStateFlow<SearchUiState>(SearchUiState.Idle)
     val state: StateFlow<SearchUiState> = _state.asStateFlow()
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     private var currentPage = 0
     private var totalPages = 1
     private var debounceJob: Job? = null
@@ -80,6 +83,18 @@ class SearchViewModel(
             viewModelScope.launch {
                 _state.value = SearchUiState.LoadingMore
                 fetch(page = currentPage + 1, append = true)
+            }
+    }
+
+    fun refresh() {
+        loadJob?.cancel()
+        loadJob =
+            viewModelScope.launch {
+                _isRefreshing.value = true
+                currentPage = 0
+                totalPages = 1
+                fetch(page = 1, append = false)
+                _isRefreshing.value = false
             }
     }
 

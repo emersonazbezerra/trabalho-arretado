@@ -26,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -52,6 +53,7 @@ fun SearchScreen(
     val filters by viewModel.filters.collectAsStateWithLifecycle()
     val items by viewModel.items.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     val listState = rememberLazyListState()
     val shouldLoadMore by remember {
@@ -109,40 +111,47 @@ fun SearchScreen(
 
             Spacer(Modifier.height(8.dp))
 
-            when (val s = state) {
-                is SearchUiState.Idle, SearchUiState.Loading ->
-                    CenteredBox { CircularProgressIndicator() }
-                is SearchUiState.Empty ->
-                    CenteredBox { Text("Nenhum profissional encontrado.") }
-                is SearchUiState.Error ->
-                    CenteredBox {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(s.message, color = MaterialTheme.colorScheme.error)
-                            TextButton(onClick = { viewModel.toggleCategory(filters.category ?: "") }) {
-                                Text("Tentar novamente")
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = viewModel::refresh,
+                modifier = Modifier.weight(1f),
+            ) {
+                when (val s = state) {
+                    is SearchUiState.Idle, SearchUiState.Loading ->
+                        CenteredBox { CircularProgressIndicator() }
+                    is SearchUiState.Empty ->
+                        CenteredBox { Text("Nenhum profissional encontrado.") }
+                    is SearchUiState.Error ->
+                        CenteredBox {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(s.message, color = MaterialTheme.colorScheme.error)
+                                TextButton(onClick = { viewModel.toggleCategory(filters.category ?: "") }) {
+                                    Text("Tentar novamente")
+                                }
                             }
                         }
-                    }
-                else -> {
-                    LazyColumn(
-                        state = listState,
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    ) {
-                        items(items, key = { it.id }) { professional ->
-                            ProfessionalCard(
-                                professional = professional,
-                                onClick = { onProfessionalClick(professional.id) },
-                            )
-                        }
-                        if (state == SearchUiState.LoadingMore) {
-                            item {
-                                Box(
-                                    modifier =
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .height(64.dp),
-                                    contentAlignment = Alignment.Center,
-                                ) { CircularProgressIndicator() }
+                    else -> {
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        ) {
+                            items(items, key = { it.id }) { professional ->
+                                ProfessionalCard(
+                                    professional = professional,
+                                    onClick = { onProfessionalClick(professional.id) },
+                                )
+                            }
+                            if (state == SearchUiState.LoadingMore) {
+                                item {
+                                    Box(
+                                        modifier =
+                                            Modifier
+                                                .fillMaxWidth()
+                                                .height(64.dp),
+                                        contentAlignment = Alignment.Center,
+                                    ) { CircularProgressIndicator() }
+                                }
                             }
                         }
                     }
