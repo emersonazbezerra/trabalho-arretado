@@ -34,6 +34,14 @@ class AuthRepository(
 
     suspend fun me(): Result<UserDto> = apiCall { api.getMe() }
 
+    suspend fun becomeProfessional(): Result<AuthResponse> {
+        val result = apiCall { api.becomeProfessional() }
+        if (result is Result.Success) {
+            tokenStore.setSession(result.data.token, result.data.user.id, result.data.user.role)
+        }
+        return result
+    }
+
     suspend fun logout() {
         tokenStore.clear()
     }

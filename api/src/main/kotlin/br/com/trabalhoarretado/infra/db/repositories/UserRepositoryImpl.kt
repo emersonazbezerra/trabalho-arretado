@@ -87,6 +87,23 @@ class UserRepositoryImpl : UserRepository {
                 .single()
         }
 
+    override fun updateRole(
+        id: UUID,
+        role: UserRole,
+    ): User =
+        transaction {
+            val rows =
+                Users.update({ Users.id eq id }) {
+                    it[Users.role] = role.name
+                }
+            if (rows == 0) throw NotFoundException("Usuário")
+            Users
+                .selectAll()
+                .where { Users.id eq id }
+                .map { it.toUser() }
+                .single()
+        }
+
     private fun ResultRow.toUser() =
         User(
             id = this[Users.id].value,

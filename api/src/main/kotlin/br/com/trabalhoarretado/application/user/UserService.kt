@@ -1,16 +1,21 @@
 package br.com.trabalhoarretado.application.user
 
+import br.com.trabalhoarretado.application.auth.AuthResponse
 import br.com.trabalhoarretado.application.auth.UserResponse
+import br.com.trabalhoarretado.application.auth.generateToken
 import br.com.trabalhoarretado.application.auth.toResponse
+import br.com.trabalhoarretado.di.JwtConfig
 import br.com.trabalhoarretado.domain.NotFoundException
 import br.com.trabalhoarretado.domain.ValidationException
 import br.com.trabalhoarretado.domain.user.UserRepository
+import br.com.trabalhoarretado.domain.user.UserRole
 import br.com.trabalhoarretado.infra.storage.ImageStorage
 import java.util.UUID
 
 class UserService(
     private val userRepository: UserRepository,
     private val imageStorage: ImageStorage,
+    private val jwtConfig: JwtConfig,
     private val defaultAvatarUrl: String,
 ) {
     suspend fun uploadAvatar(
@@ -30,6 +35,18 @@ class UserService(
         val key = "users/$userId/${UUID.randomUUID()}.$extension"
         val url = imageStorage.upload(bytes, contentType, key)
         return userRepository.updateAvatarUrl(userId, url).toResponse(defaultAvatarUrl)
+    }
+
+    fun becomeProfessional(userId: UUID): AuthResponse {
+        val user = userRepository.findById(userId) ?: throw NotFoundException("Usuário")
+        if (user.role == UserRole.PROFESSIONAL) {
+            throw ValidationException("Usuário já é profissional")
+        }
+        val updated = userRepository.updateRole(userId, UserRole.PROFESSIONAL)
+        return AuthResponse(
+            token = generateToken(jwtConfig, updated.id, updated.role),
+            user = updated.toResponse(defaultAvatarUrl),
+        )
     }
 
     companion object {

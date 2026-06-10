@@ -21,4 +21,9 @@ interface UserRepository {
         id: UUID,
         avatarUrl: String,
     ): User
+
+    fun updateRole(
+        id: UUID,
+        role: UserRole,
+    ): User
 }

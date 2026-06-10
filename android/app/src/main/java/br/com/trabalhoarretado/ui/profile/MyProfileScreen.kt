@@ -150,6 +150,7 @@ fun MyProfileScreen(
                         onPublishNew = onPublishNew,
                         onEditService = onEditService,
                         onDeleteService = viewModel::deleteService,
+                        onBecomeProfessional = viewModel::becomeProfessional,
                     )
             }
         }
@@ -166,6 +167,7 @@ private fun ProfileForm(
     onPublishNew: () -> Unit,
     onEditService: (String) -> Unit,
     onDeleteService: (String) -> Unit,
+    onBecomeProfessional: () -> Unit,
 ) {
     val isProfessional = user.role == "PROFESSIONAL"
     var name by remember(user.id) { mutableStateOf(user.name) }
@@ -290,6 +292,15 @@ private fun ProfileForm(
             ReadOnlyField("Cidade", user.city)
             ReadOnlyField("Estado", user.state)
             ReadOnlyField("Telefone", user.phone)
+
+            Spacer(Modifier.height(24.dp))
+            Button(
+                onClick = onBecomeProfessional,
+                enabled = !saving,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Fornecer serviços")
+            }
         }
     }
 }

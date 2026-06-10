@@ -102,4 +102,7 @@ interface ApiService {
     suspend fun uploadAvatar(
         @Part file: MultipartBody.Part,
     ): UserDto
+
+    @POST("/api/users/me/become-professional")
+    suspend fun becomeProfessional(): AuthResponse
 }

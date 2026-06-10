@@ -45,5 +45,19 @@ fun Route.userRoutes(userService: UserService) {
             val response = userService.uploadAvatar(userId, fileBytes, type)
             call.respond(HttpStatusCode.OK, response)
         }
+
+        post("/become-professional") {
+            val userId =
+                UUID.fromString(
+                    call
+                        .principal<JWTPrincipal>()!!
+                        .payload
+                        .getClaim("userId")
+                        .asString(),
+                )
+
+            val response = userService.becomeProfessional(userId)
+            call.respond(HttpStatusCode.OK, response)
+        }
     }
 }

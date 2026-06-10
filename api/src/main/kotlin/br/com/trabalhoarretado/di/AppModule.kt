@@ -45,7 +45,7 @@ fun appModule(
     single { AuthService(get(), jwtConfig, defaultAvatarUrl) }
     single { ProfessionalService(get(), get(), get(), defaultAvatarUrl) }
     single { ServiceOfferService(get()) }
-    single { UserService(get(), get(), defaultAvatarUrl) }
+    single { UserService(get(), get(), jwtConfig, defaultAvatarUrl) }
     single { FavoriteService(get(), get(), get(), defaultAvatarUrl) }
     single { ReviewService(get(), get()) }
 }

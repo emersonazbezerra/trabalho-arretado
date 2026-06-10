@@ -9,10 +9,7 @@ import br.com.trabalhoarretado.domain.user.User
 import br.com.trabalhoarretado.domain.user.UserRepository
 import br.com.trabalhoarretado.domain.user.UserRole
 import br.com.trabalhoarretado.infra.db.tables.Users.phone
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import org.mindrot.jbcrypt.BCrypt
-import java.util.Date
 import java.util.UUID
 
 class AuthService(
@@ -40,32 +37,19 @@ class AuthService(
                 state = req.state,
                 phone = req.phone,
             )
-        return AuthResponse(token = generateToken(user.id, user.role), user = user.toResponse(defaultAvatarUrl))
+        return AuthResponse(token = generateToken(jwtConfig, user.id, user.role), user = user.toResponse(defaultAvatarUrl))
     }
 
     fun login(req: LoginRequest): AuthResponse {
         val user = userRepository.findByEmail(req.email) ?: throw InvalidCredentialsException()
         if (!BCrypt.checkpw(req.password, user.passwordHash)) throw InvalidCredentialsException()
-        return AuthResponse(token = generateToken(user.id, user.role), user = user.toResponse(defaultAvatarUrl))
+        return AuthResponse(token = generateToken(jwtConfig, user.id, user.role), user = user.toResponse(defaultAvatarUrl))
     }
 
     fun getMe(userId: UUID): UserResponse {
         val user = userRepository.findById(userId) ?: throw NotFoundException("Usuário")
         return user.toResponse(defaultAvatarUrl)
     }
-
-    private fun generateToken(
-        userId: UUID,
-        role: UserRole,
-    ): String =
-        JWT
-            .create()
-            .withAudience(jwtConfig.audience)
-            .withIssuer(jwtConfig.issuer)
-            .withClaim("userId", userId.toString())
-            .withClaim("role", role.name)
-            .withExpiresAt(Date(System.currentTimeMillis() + jwtConfig.expiresInDays * 24 * 60 * 60 * 1000))
-            .sign(Algorithm.HMAC256(jwtConfig.secret))
 }
 
 internal fun User.toResponse(defaultAvatarUrl: String) =

@@ -120,6 +120,21 @@ class MyProfileViewModel(
         }
     }
 
+    fun becomeProfessional() {
+        viewModelScope.launch {
+            _saving.value = true
+            val result = authRepository.becomeProfessional()
+            _saving.value = false
+            when (result) {
+                is Result.Success -> {
+                    _message.value = "Agora você é um profissional"
+                    loadUser()
+                }
+                is Result.Error -> _message.value = result.message
+            }
+        }
+    }
+
     fun deleteService(id: String) {
         viewModelScope.launch {
             when (val result = serviceRepository.delete(id)) {
