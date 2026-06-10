@@ -58,6 +58,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.trabalhoarretado.data.dto.ServiceDto
 import br.com.trabalhoarretado.data.dto.UserDto
+import br.com.trabalhoarretado.ui.common.StateDropdown
 import br.com.trabalhoarretado.ui.common.UiState
 import br.com.trabalhoarretado.ui.common.categoryLabel
 import coil3.compose.AsyncImage
@@ -216,47 +217,46 @@ private fun ProfileForm(
         Text(user.email, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(16.dp))
 
-        if (isProfessional) {
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Nome") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(Modifier.height(12.dp))
-            OutlinedTextField(
-                value = city,
-                onValueChange = { city = it },
-                label = { Text("Cidade") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(Modifier.height(12.dp))
-            OutlinedTextField(
-                value = state,
-                onValueChange = { state = it },
-                label = { Text("Estado (UF)") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(Modifier.height(12.dp))
-            OutlinedTextField(
-                value = phone,
-                onValueChange = { phone = it },
-                label = { Text("Telefone (WhatsApp)") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(Modifier.height(16.dp))
-            Button(
-                onClick = { onSave(name, city, state, phone) },
-                enabled = !saving,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("Salvar perfil")
-            }
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Nome") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(Modifier.height(12.dp))
+        OutlinedTextField(
+            value = city,
+            onValueChange = { city = it },
+            label = { Text("Cidade") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(Modifier.height(12.dp))
+        StateDropdown(
+            value = state,
+            onValueChange = { state = it },
+            modifier = Modifier.fillMaxWidth(),
+            label = "Estado (UF)",
+        )
+        Spacer(Modifier.height(12.dp))
+        OutlinedTextField(
+            value = phone,
+            onValueChange = { phone = it },
+            label = { Text("Telefone (WhatsApp)") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(Modifier.height(16.dp))
+        Button(
+            onClick = { onSave(name, city, state, phone) },
+            enabled = !saving,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("Salvar perfil")
+        }
 
+        if (isProfessional) {
             Spacer(Modifier.height(24.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -287,12 +287,6 @@ private fun ProfileForm(
                 }
             }
         } else {
-            // CLIENT: dados básicos somente leitura nesta fase.
-            ReadOnlyField("Nome", user.name)
-            ReadOnlyField("Cidade", user.city)
-            ReadOnlyField("Estado", user.state)
-            ReadOnlyField("Telefone", user.phone)
-
             Spacer(Modifier.height(24.dp))
             Button(
                 onClick = onBecomeProfessional,
@@ -330,17 +324,6 @@ private fun ServiceRow(
                 Icon(Icons.Filled.Delete, contentDescription = "Remover serviço", tint = MaterialTheme.colorScheme.error)
             }
         }
-    }
-}
-
-@Composable
-private fun ReadOnlyField(
-    label: String,
-    value: String?,
-) {
-    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
-        Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(value?.takeIf { it.isNotBlank() } ?: "—", style = MaterialTheme.typography.bodyLarge)
     }
 }
 

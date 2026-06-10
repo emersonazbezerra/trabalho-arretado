@@ -1,5 +1,6 @@
 package br.com.trabalhoarretado.routes
 
+import br.com.trabalhoarretado.application.user.UpdateUserRequest
 import br.com.trabalhoarretado.application.user.UserService
 import br.com.trabalhoarretado.domain.ValidationException
 import io.ktor.http.HttpStatusCode
@@ -7,16 +8,33 @@ import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
+import io.ktor.server.request.receive
 import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import io.ktor.utils.io.toByteArray
 import java.util.UUID
 
 fun Route.userRoutes(userService: UserService) {
     route("/api/users/me") {
+        put {
+            val userId =
+                UUID.fromString(
+                    call
+                        .principal<JWTPrincipal>()!!
+                        .payload
+                        .getClaim("userId")
+                        .asString(),
+                )
+
+            val req = call.receive<UpdateUserRequest>()
+            val response = userService.updateProfile(userId, req)
+            call.respond(HttpStatusCode.OK, response)
+        }
+
         post("/avatar") {
             val userId =
                 UUID.fromString(

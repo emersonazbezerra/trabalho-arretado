@@ -9,6 +9,7 @@ import br.com.trabalhoarretado.domain.NotFoundException
 import br.com.trabalhoarretado.domain.ValidationException
 import br.com.trabalhoarretado.domain.user.UserRepository
 import br.com.trabalhoarretado.domain.user.UserRole
+import br.com.trabalhoarretado.domain.user.UserUpdate
 import br.com.trabalhoarretado.infra.storage.ImageStorage
 import java.util.UUID
 
@@ -35,6 +36,24 @@ class UserService(
         val key = "users/$userId/${UUID.randomUUID()}.$extension"
         val url = imageStorage.upload(bytes, contentType, key)
         return userRepository.updateAvatarUrl(userId, url).toResponse(defaultAvatarUrl)
+    }
+
+    fun updateProfile(
+        userId: UUID,
+        req: UpdateUserRequest,
+    ): UserResponse {
+        userRepository.findById(userId) ?: throw NotFoundException("Usuário")
+        val updated =
+            userRepository.update(
+                userId,
+                UserUpdate(
+                    name = req.name,
+                    city = req.city,
+                    state = req.state,
+                    phone = req.phone,
+                ),
+            )
+        return updated.toResponse(defaultAvatarUrl)
     }
 
     fun becomeProfessional(userId: UUID): AuthResponse {

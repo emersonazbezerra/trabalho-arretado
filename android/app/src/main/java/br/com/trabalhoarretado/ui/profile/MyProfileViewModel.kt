@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.trabalhoarretado.data.dto.ServiceDto
 import br.com.trabalhoarretado.data.dto.UpdateProfessionalRequest
+import br.com.trabalhoarretado.data.dto.UpdateUserRequest
 import br.com.trabalhoarretado.data.dto.UserDto
 import br.com.trabalhoarretado.data.repository.AuthRepository
 import br.com.trabalhoarretado.data.repository.ProfessionalRepository
@@ -74,7 +75,6 @@ class MyProfileViewModel(
         phone: String,
     ) {
         val id = userId ?: return
-        if (!isProfessional) return
         if (name.isBlank()) {
             _message.value = "Nome é obrigatório"
             return
@@ -82,15 +82,26 @@ class MyProfileViewModel(
         viewModelScope.launch {
             _saving.value = true
             val result =
-                userRepository.updateProfessional(
-                    id,
-                    UpdateProfessionalRequest(
-                        name = name.trim(),
-                        city = city.trim().takeIf { it.isNotEmpty() },
-                        state = state.trim().takeIf { it.isNotEmpty() },
-                        phone = phone.trim().takeIf { it.isNotEmpty() },
-                    ),
-                )
+                if (isProfessional) {
+                    userRepository.updateProfessional(
+                        id,
+                        UpdateProfessionalRequest(
+                            name = name.trim(),
+                            city = city.trim().takeIf { it.isNotEmpty() },
+                            state = state.trim().takeIf { it.isNotEmpty() },
+                            phone = phone.trim().takeIf { it.isNotEmpty() },
+                        ),
+                    )
+                } else {
+                    userRepository.updateMe(
+                        UpdateUserRequest(
+                            name = name.trim(),
+                            city = city.trim().takeIf { it.isNotEmpty() },
+                            state = state.trim().takeIf { it.isNotEmpty() },
+                            phone = phone.trim().takeIf { it.isNotEmpty() },
+                        ),
+                    )
+                }
             _saving.value = false
             when (result) {
                 is Result.Success -> {

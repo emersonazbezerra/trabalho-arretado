@@ -26,6 +26,14 @@ data class AuthResponse(
 )
 
 @Serializable
+data class UpdateUserRequest(
+    val name: String? = null,
+    val city: String? = null,
+    val state: String? = null,
+    val phone: String? = null,
+)
+
+@Serializable
 data class UserDto(
     val id: String,
     val name: String,

@@ -26,4 +26,16 @@ interface UserRepository {
         id: UUID,
         role: UserRole,
     ): User
+
+    fun update(
+        id: UUID,
+        update: UserUpdate,
+    ): User
 }
+
+data class UserUpdate(
+    val name: String?,
+    val city: String?,
+    val state: String?,
+    val phone: String?,
+)

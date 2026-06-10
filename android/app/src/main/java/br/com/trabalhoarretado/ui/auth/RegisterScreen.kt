@@ -12,11 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -38,16 +34,10 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import br.com.trabalhoarretado.ui.common.StateDropdown
 import org.koin.androidx.compose.koinViewModel
 
 private val ROLES = listOf("CLIENT" to "Cliente", "PROFESSIONAL" to "Profissional")
-
-private val BRAZILIAN_STATES =
-    listOf(
-        "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
-        "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
-        "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO",
-    )
 
 // Prefixo literal inserido imediatamente antes de cada dígito, no formato (XX) XXXXX-XXXX
 private val PHONE_DIGIT_PREFIXES = listOf("(", "", ") ", "", "", "", "", "-", "", "", "")
@@ -91,7 +81,6 @@ fun RegisterScreen(
     var state by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var role by remember { mutableStateOf("CLIENT") }
-    var stateExpanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState) {
         if (uiState is AuthUiState.Success) {
@@ -145,36 +134,11 @@ fun RegisterScreen(
         Spacer(Modifier.height(8.dp))
         OutlinedTextField(value = city, onValueChange = { city = it }, label = { Text("Cidade") }, singleLine = true, modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(8.dp))
-        ExposedDropdownMenuBox(
-            expanded = stateExpanded,
-            onExpandedChange = { stateExpanded = it },
+        StateDropdown(
+            value = state,
+            onValueChange = { state = it },
             modifier = Modifier.fillMaxWidth(),
-        ) {
-            OutlinedTextField(
-                value = state,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("UF") },
-                singleLine = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = stateExpanded) },
-                modifier = Modifier.fillMaxWidth().menuAnchor(),
-            )
-            DropdownMenu(
-                expanded = stateExpanded,
-                onDismissRequest = { stateExpanded = false },
-                modifier = Modifier.exposedDropdownSize(),
-            ) {
-                BRAZILIAN_STATES.forEach { uf ->
-                    DropdownMenuItem(
-                        text = { Text(uf) },
-                        onClick = {
-                            state = uf
-                            stateExpanded = false
-                        },
-                    )
-                }
-            }
-        }
+        )
         Spacer(Modifier.height(8.dp))
         OutlinedTextField(
             value = phone,

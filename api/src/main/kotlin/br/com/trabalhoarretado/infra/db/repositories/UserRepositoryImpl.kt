@@ -4,6 +4,7 @@ import br.com.trabalhoarretado.domain.NotFoundException
 import br.com.trabalhoarretado.domain.user.User
 import br.com.trabalhoarretado.domain.user.UserRepository
 import br.com.trabalhoarretado.domain.user.UserRole
+import br.com.trabalhoarretado.domain.user.UserUpdate
 import br.com.trabalhoarretado.infra.db.tables.Users
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.eq
@@ -95,6 +96,26 @@ class UserRepositoryImpl : UserRepository {
             val rows =
                 Users.update({ Users.id eq id }) {
                     it[Users.role] = role.name
+                }
+            if (rows == 0) throw NotFoundException("Usuário")
+            Users
+                .selectAll()
+                .where { Users.id eq id }
+                .map { it.toUser() }
+                .single()
+        }
+
+    override fun update(
+        id: UUID,
+        update: UserUpdate,
+    ): User =
+        transaction {
+            val rows =
+                Users.update({ Users.id eq id }) {
+                    update.name?.let { name -> it[Users.name] = name }
+                    update.city?.let { city -> it[Users.city] = city }
+                    update.state?.let { state -> it[Users.state] = state }
+                    update.phone?.let { phone -> it[Users.phone] = phone }
                 }
             if (rows == 0) throw NotFoundException("Usuário")
             Users

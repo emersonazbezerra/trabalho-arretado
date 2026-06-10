@@ -12,6 +12,7 @@ import br.com.trabalhoarretado.data.dto.ReviewDto
 import br.com.trabalhoarretado.data.dto.ServiceDto
 import br.com.trabalhoarretado.data.dto.UpdateProfessionalRequest
 import br.com.trabalhoarretado.data.dto.UpdateServiceRequest
+import br.com.trabalhoarretado.data.dto.UpdateUserRequest
 import br.com.trabalhoarretado.data.dto.UserDto
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -105,4 +106,9 @@ interface ApiService {
 
     @POST("/api/users/me/become-professional")
     suspend fun becomeProfessional(): AuthResponse
+
+    @PUT("/api/users/me")
+    suspend fun updateMe(
+        @Body request: UpdateUserRequest,
+    ): UserDto
 }

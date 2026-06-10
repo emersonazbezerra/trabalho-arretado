@@ -2,6 +2,7 @@ package br.com.trabalhoarretado.data.repository
 
 import br.com.trabalhoarretado.data.dto.ProfessionalProfileDto
 import br.com.trabalhoarretado.data.dto.UpdateProfessionalRequest
+import br.com.trabalhoarretado.data.dto.UpdateUserRequest
 import br.com.trabalhoarretado.data.dto.UserDto
 import br.com.trabalhoarretado.data.remote.ApiService
 import br.com.trabalhoarretado.domain.Result
@@ -17,6 +18,8 @@ class UserRepository(
         id: String,
         request: UpdateProfessionalRequest,
     ): Result<ProfessionalProfileDto> = apiCall { api.updateProfessional(id, request) }
+
+    suspend fun updateMe(request: UpdateUserRequest): Result<UserDto> = apiCall { api.updateMe(request) }
 
     suspend fun uploadAvatar(
         bytes: ByteArray,
